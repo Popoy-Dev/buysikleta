@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import IndexNavbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
 
-import benchStore from "./../assets/img/bench-store.jpg";
+import romanticBaboy from "./../assets/img/romantic_baboy.jpg";
 import starbucksStore from "./../assets/img/starbucks.png";
 import breadTalk from "./../assets/img/BreadTalk-logo.jpg";
 import { useHistory } from "react-router-dom";
@@ -86,7 +86,7 @@ const Index = () => {
               >
                 <img
                   alt="..."
-                  src={benchStore}
+                  src={romanticBaboy}
                   className="w-full align-middle rounded-t-lg"
                 />
                 <blockquote className="relative p-8 mb-4">
@@ -114,7 +114,7 @@ const Index = () => {
                   <Button
                     shape="round"
                     size="large"
-                    onClick={() => history.push("/bench")}
+                    onClick={() => history.push("/romantic_baboy")}
                   >
                     Shop Now
                   </Button>

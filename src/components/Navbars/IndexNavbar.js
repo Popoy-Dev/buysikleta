@@ -3,12 +3,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 // components
-import { Modal, Button, message } from "antd";
+import { Modal, Button, message, Table, Space } from "antd";
 import IndexDropdown from "components/Dropdowns/IndexDropdown.js";
 import { supabase } from "./../../supabaseClient";
 import SignUp from "./../../components/Forms/SignUp";
 import LoginForm from "./../../components/Forms/LoginForm";
-export default function Navbar() {
+export default function Navbar({ addCartList }) {
   const info = supabase.auth.session();
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const [userDetails, setUserDetails] = useState({});
@@ -16,9 +16,16 @@ export default function Navbar() {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
-  // useEffect(() => {
-  //   setUserDetails(userData);
-  // }, [userData]);
+  const [cartList, setCartList] = useState({});
+
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setCartList(JSON.parse(localStorage.getItem("lists")));
+  }, []);
+  useEffect(() => {
+    setCartList(JSON.parse(localStorage.getItem("lists")));
+  }, [addCartList]);
 
   const userId = Math.floor(100000 + Math.random() * 900000);
   const uid = info?.user.user_metadata.uid;
@@ -77,18 +84,19 @@ export default function Navbar() {
       password: values.password,
     });
 
-    if (user) {
-      const { data } = await supabase.from("users").select().eq("uid", uid);
-      setUserData(data);
-      setIsLoginModalVisible(false);
-      message.success(
-        "This is a prompt message for success, and it will disappear in 10 seconds",
-        10
-      );
-    }
+    message.success(
+      "This is a prompt message for success, and it will disappear in 10 seconds",
+      10
+    );
+    window.location.reload(false);
+
+    const { data } = await supabase.from("users").select().eq("uid", uid);
+    setUserData(data);
+    setIsLoginModalVisible(false);
   };
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+    window.location.reload(false);
   };
 
   const fetchUser = async () => {
@@ -98,8 +106,86 @@ export default function Navbar() {
   useEffect(() => {
     fetchUser();
   }, []);
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+    {
+      title: "Action",
+      key: "itemId",
+      render: (text, record) => (
+        <Space size="middle">
+          <a onClick={() => deleteItem(record)}>Remove</a>
+        </Space>
+      ),
+    },
+  ];
+
+  const deleteItem = (record) => {
+    console.log("delete", record);
+
+    const items = JSON.parse(localStorage.getItem("lists"));
+    console.log("items", items);
+
+    const filtered = items.filter((item) => item.itemId !== record.itemId);
+    console.log("filtered", filtered);
+    // const setUpdatedItems =
+    localStorage.setItem("lists", JSON.stringify(filtered));
+
+    // const getUpdatedItems =
+    const getUpdatedItems = setCartList(
+      JSON.parse(localStorage.getItem("lists"))
+    );
+  };
+
+  const handleModal = () => {
+    setCartList(JSON.parse(localStorage.getItem("lists")));
+    setVisible(true);
+    console.log(JSON.parse(localStorage.getItem("lists")));
+  };
+
+  const onSubmit = async () => {
+    message.success("Congratulations, your order has been placed.", 10);
+    console.log("cartList", cartList);
+    console.log("order info", info.user.user_metadata.uid);
+    const { data, err } = await supabase.from("orders").insert([
+      {
+        orders: cartList,
+        user_id: info.user.user_metadata.uid,
+      },
+    ]);
+    if (data) {
+      message.success("Congratulations, your order has been placed.", 10);
+    }
+    setVisible(false);
+    localStorage.removeItem("lists");
+    window.location.reload(false);
+  };
   return (
     <>
+      <Modal
+        title="Checkout"
+        centered
+        visible={visible}
+        onOk={onSubmit}
+        onCancel={() => setVisible(false)}
+        width={1000}
+      >
+        <Table dataSource={cartList} columns={columns} rowKey="itemId" />
+      </Modal>
       <Modal
         title="Login"
         visible={isLoginModalVisible}
@@ -151,20 +237,37 @@ export default function Navbar() {
                 <>
                   <li className="pt-4 flex items-center">
                     <p className="font-bold pr-4">{` ${userData[0].firstname} ${userData[0].lastname}`}</p>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-10"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
+                    {cartList ? (
+                      <a
+                        href="#"
+                        role="button"
+                        className="relative flex"
+                        onClick={handleModal}
+                      >
+                        <svg
+                          className="flex-1 w-8 h-8 fill-current"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M1,2V4H3L6.6,11.59L5.24,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75C7.17,14.7 7.18,14.66 7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.58 17.3,11.97L20.88,5.5C20.95,5.34 21,5.17 21,5A1,1 0 0,0 20,4H5.21L4.27,2M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18Z" />
+                        </svg>
+                        <span
+                          className="absolute right-0 top-4 rounded-full bg-red-600 w-5 h-5 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center"
+                          style={{ top: "-10px" }}
+                        >
+                          {JSON.parse(localStorage.lists).length}
+                        </span>
+                      </a>
+                    ) : (
+                      <a href="#" role="button" className="relative flex">
+                        <svg
+                          className="flex-1 w-8 h-8 fill-current"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M1,2V4H3L6.6,11.59L5.24,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75C7.17,14.7 7.18,14.66 7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.58 17.3,11.97L20.88,5.5C20.95,5.34 21,5.17 21,5A1,1 0 0,0 20,4H5.21L4.27,2M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18Z" />
+                        </svg>
+                      </a>
+                    )}
+
                     <Button danger onClick={signOut}>
                       Logout
                     </Button>

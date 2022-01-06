@@ -28,7 +28,7 @@ ReactDOM.render(
       <Route path="/auth" component={Auth} />
       {/* add routes without layouts */}
       <Route path="/landing" exact component={Landing} />
-      <Route path="/bench" exact component={Products} />
+      <Route path="/romantic_baboy" exact component={Products} />
       <Route path="/starbucks" exact component={Products} />
       <Route path="/profile" exact component={Profile} />
       <Route path="/" exact component={Index} />
