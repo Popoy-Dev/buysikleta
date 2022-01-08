@@ -30,7 +30,7 @@ ReactDOM.render(
       <Route path="/landing" exact component={Landing} />
       <Route path="/romantic_baboy" exact component={Products} />
       <Route path="/starbucks" exact component={Products} />
-      <Route path="/profile" exact component={Profile} />
+      <Route path="/rider-profile" exact component={Profile} />
       <Route path="/" exact component={Index} />
       {/* add redirect for first page */}
       <Redirect from="*" to="/" />
