@@ -16,6 +16,8 @@ export default function Profile() {
   const [isOrderInfoModal, setIsOrderInfoModal] = useState(false);
   const [modalOrderLists, setModalOrderLists] = useState({});
   const [order, setOrder] = useState({});
+  const [availableOrders, setAvailableOrders] = useState(true);
+
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
     setRiderInfo(data);
@@ -24,6 +26,15 @@ export default function Profile() {
     const { data } = await supabase
       .from("orders")
       .select()
+      .is("rider_uid", null);
+    // .not("rider_uid", "is", null);
+    setOrderDetailLists(data);
+  };
+  const pendingOrderLists = async () => {
+    const { data } = await supabase
+      .from("orders")
+      .select()
+      // .is("rider_uid", null);
       .not("rider_uid", "is", null);
     setOrderDetailLists(data);
   };
@@ -99,7 +110,10 @@ export default function Profile() {
       .from("orders")
       .update({ rider_uid: uid })
       .match({ order_id: orderId });
-    setIsOrderInfoModal(false);
+    if (data) {
+      setIsOrderInfoModal(false);
+      orderLists();
+    }
   };
 
   const modaldetailLists = async () => {
@@ -131,6 +145,11 @@ export default function Profile() {
     },
   ];
 
+  const handleAvailableOrders = () => {
+    setCustomerDetails([]);
+    pendingOrderLists();
+    setAvailableOrders(false);
+  };
   return (
     <>
       <Modal
@@ -140,7 +159,11 @@ export default function Profile() {
         onOk={handleOrderDetailsOk}
         onCancel={handleOrderDetailsCancel}
       >
-        <Table dataSource={order[0]?.orders} columns={orderColumns} />
+        <Table
+          dataSource={order[0]?.orders}
+          columns={orderColumns}
+          rowKey="order_id"
+        />
         {/* {order && order[0]?.orders?.map((item) => <>
           <p className="inline">{item.name}</p>
           <p className="inline">{item.name}</p>
@@ -213,12 +236,34 @@ export default function Profile() {
                     </div>
                   </div>
                 )}
-                <Button type="primary"> Available Orders </Button>
-                <Table
-                  dataSource={customerDetails}
-                  columns={columns}
-                  rowKey="order_id"
-                />
+                <Button type="primary" onClick={() => setAvailableOrders(true)}>
+                  {" "}
+                  Available Orders{" "}
+                </Button>
+                <Button
+                  type="default"
+                  style={{ marginLeft: "20px" }}
+                  onClick={handleAvailableOrders}
+                >
+                  {" "}
+                  Pending Orders{" "}
+                </Button>
+                <br />
+                {availableOrders === true ? (
+                  <Table
+                    dataSource={customerDetails}
+                    columns={columns}
+                    rowKey="order_id"
+                  />
+                ) : (
+                  <Table
+                    dataSource={customerDetails}
+                    columns={columns}
+                    rowKey="order_id"
+                  />
+                )}
+                {}
+
                 <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full lg:w-9/12 px-4"></div>
