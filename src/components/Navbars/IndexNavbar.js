@@ -159,12 +159,12 @@ export default function Navbar({ addCartList }) {
 
   const onSubmit = async () => {
     message.success("Congratulations, your order has been placed.", 10);
-    console.log("cartList", cartList);
-    console.log("order info", info.user.user_metadata.uid);
+
     const { data, err } = await supabase.from("orders").insert([
       {
         orders: cartList,
         user_id: info.user.user_metadata.uid,
+        order_id: Math.floor(100000 + Math.random() * 900000),
       },
     ]);
     if (data) {

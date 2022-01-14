@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import starbucksCover from "./../assets/img/starbucks-cover.png";
 import benchStoreMain from "./../assets/img/bench-store-main.jpg";
 import romanticBaboy from "./../assets/img/romantic_baboy.jpg";
@@ -12,10 +11,9 @@ import { supabase } from "./../supabaseClient";
 export default function Products() {
   const [addCartList, setAddCartList] = useState([]);
   const [productList, setProductList] = useState([]);
-  const { Option } = Select;
   const queryString = window.location.pathname;
   const [mainImage, setMainImage] = useState(null);
-  const itemId = Math.floor(100000 + Math.random() * 900000);
+
   const bannerImage = () => {
     if (queryString === "/romantic_baboy") setMainImage(romanticBaboy);
     if (queryString === "/starbucks") setMainImage(starbucksCover);
@@ -40,14 +38,11 @@ export default function Products() {
   const handleChange = (value) => {
     console.log(`selected ${value}`);
   };
-  const onChange = (value) => {
-    // console.log("changed", value);
-  };
+  const onChange = (value) => {};
   const onFinish = (values) => {
     setAddCartList((oldArray) => [...oldArray, values]);
 
     const data = [...addCartList, values];
-    // const data = setAddCartList((oldArray) => [...oldArray, values]);
     localStorage.setItem("lists", JSON.stringify(data));
 
     console.log("values", values);
@@ -99,32 +94,11 @@ export default function Products() {
                               initialValues={{
                                 name: list.name,
                                 price: list.price,
-                                itemId: i + itemId,
                               }}
                               onFinish={onFinish}
                               onFinishFailed={onFinishFailed}
                               autoComplete="off"
                             >
-                              {/* <Form.Item
-                                label="Size"
-                                name="size"
-                                labelCol={{ span: 4 }}
-                              >
-                                <Select
-                                  style={{ width: "100%" }}
-                                  onChange={handleChange}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Please input size!",
-                                    },
-                                  ]}
-                                >
-                                  <Option value="small">Small</Option>
-                                  <Option value="medium">Medium</Option>
-                                  <Option value="large">Large</Option>
-                                </Select>
-                              </Form.Item> */}
                               <Form.Item
                                 label="Quantity"
                                 name="quantity"
@@ -160,14 +134,6 @@ export default function Products() {
                                 hidden={true}
                               >
                                 <Input initialvalues={list.price} />
-                              </Form.Item>
-                              <Form.Item
-                                label="itemId"
-                                name="itemId"
-                                labelCol={{ span: 4 }}
-                                hidden={true}
-                              >
-                                <Input initialvalues={itemId} />
                               </Form.Item>
 
                               <Form.Item>

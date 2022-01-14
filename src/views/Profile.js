@@ -1,11 +1,151 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import Navbar from "components/Navbars/AuthNavbar.js";
+
 import Footer from "components/Footers/Footer.js";
+import { supabase } from "./../supabaseClient";
+import { Button, Table, Modal } from "antd";
 
 export default function Profile() {
+  const info = supabase.auth.session();
+  const uid = info?.user.user_metadata.uid;
+  const [riderInfo, setRiderInfo] = useState("");
+  const [orderDetailLists, setOrderDetailLists] = useState([]);
+  const [customerDetails, setCustomerDetails] = useState([]);
+  const [orderId, setOrderId] = useState(null);
+  const [isOrderInfoModal, setIsOrderInfoModal] = useState(false);
+  const [modalOrderLists, setModalOrderLists] = useState({});
+  const [order, setOrder] = useState({});
+  const profileImage = async () => {
+    const { data } = await supabase.from("users").select().eq("uid", uid);
+    setRiderInfo(data);
+  };
+  const orderLists = async () => {
+    const { data } = await supabase
+      .from("orders")
+      .select()
+      .not("rider_uid", "is", null);
+    setOrderDetailLists(data);
+  };
+
+  const orderDetail = () => {
+    orderDetailLists?.map(async (list) => {
+      const { data } = await supabase
+        .from("users")
+        .select("firstname, lastname, address, barangay")
+        .eq("uid", list.user_id);
+      data[0].order_id = list.order_id;
+
+      setCustomerDetails((oldArray) => [...oldArray, ...data]);
+    });
+  };
+  useEffect(() => {
+    profileImage();
+    orderLists();
+  }, []);
+
+  useEffect(() => {
+    orderDetail();
+  }, [orderDetailLists]);
+
+  const viewOrder = (record) => {
+    setOrderId(record.order_id);
+    setIsOrderInfoModal(true);
+    setModalOrderLists(record);
+  };
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "firstname",
+      key: "firstname",
+      render: (text, record) => (
+        <p>
+          {record.firstname} {record.lastname}
+        </p>
+      ),
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (text, record) => (
+        <p>
+          {record.address} {record.barangay}
+        </p>
+      ),
+    },
+    {
+      title: "Orders",
+      dataIndex: "orders",
+      key: "orders",
+      render: (text, record) => (
+        <Button
+          style={{ backgroundColor: "#f0c83a" }}
+          onClick={() => viewOrder(record)}
+          className="pr-2"
+        >
+          Order Details
+        </Button>
+      ),
+    },
+  ];
+  const handleOrderDetailsCancel = () => {
+    setIsOrderInfoModal(false);
+  };
+
+  const handleOrderDetailsOk = async () => {
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ rider_uid: uid })
+      .match({ order_id: orderId });
+    setIsOrderInfoModal(false);
+  };
+
+  const modaldetailLists = async () => {
+    const { data } = await supabase
+      .from("orders")
+      .select()
+      .eq("order_id", modalOrderLists.order_id);
+    setOrder(data);
+  };
+  useEffect(() => {
+    modaldetailLists();
+  }, [modalOrderLists]);
+
+  const orderColumns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+  ];
+
   return (
     <>
+      <Modal
+        width={1000}
+        title="Order Details"
+        visible={isOrderInfoModal}
+        onOk={handleOrderDetailsOk}
+        onCancel={handleOrderDetailsCancel}
+      >
+        <Table dataSource={order[0]?.orders} columns={orderColumns} />
+        {/* {order && order[0]?.orders?.map((item) => <>
+          <p className="inline">{item.name}</p>
+          <p className="inline">{item.name}</p>
+        </>)} */}
+      </Modal>
       <Navbar transparent />
       <main className="profile-page">
         <section className="relative block h-500-px">
@@ -56,79 +196,32 @@ export default function Profile() {
                     </div>
                   </div>
                   <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
-                    <div className="py-6 px-3 mt-32 sm:mt-0">
-                      <button
-                        className="bg-lightBlue-500 active:bg-lightBlue-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-                        type="button"
-                      >
-                        Connect
-                      </button>
-                    </div>
+                    <div className="py-6 px-3 mt-32 sm:mt-0"></div>
                   </div>
                   <div className="w-full lg:w-4/12 px-4 lg:order-1">
-                    <div className="flex justify-center py-4 lg:pt-4 pt-8">
-                      <div className="mr-4 p-3 text-center">
-                        <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          22
-                        </span>
-                        <span className="text-sm text-blueGray-400">
-                          Friends
-                        </span>
-                      </div>
-                      <div className="mr-4 p-3 text-center">
-                        <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          10
-                        </span>
-                        <span className="text-sm text-blueGray-400">
-                          Photos
-                        </span>
-                      </div>
-                      <div className="lg:mr-4 p-3 text-center">
-                        <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                          89
-                        </span>
-                        <span className="text-sm text-blueGray-400">
-                          Comments
-                        </span>
-                      </div>
+                    <div className="flex justify-center py-4 lg:pt-4 pt-8"></div>
+                  </div>
+                </div>
+                {riderInfo && (
+                  <div className="text-center mt-12">
+                    <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
+                      {`${riderInfo[0]?.firstname}   ${riderInfo[0]?.lastname} `}
+                    </h3>
+                    <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
+                      <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>{" "}
+                      {`${riderInfo[0]?.address}  ${riderInfo[0]?.barangay}  `}
                     </div>
                   </div>
-                </div>
-                <div className="text-center mt-12">
-                  <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-                    Jenna Stones
-                  </h3>
-                  <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-                    <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>{" "}
-                    Los Angeles, California
-                  </div>
-                  <div className="mb-2 text-blueGray-600 mt-10">
-                    <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-                    Solution Manager - Creative Tim Officer
-                  </div>
-                  <div className="mb-2 text-blueGray-600">
-                    <i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-                    University of Computer Science
-                  </div>
-                </div>
+                )}
+                <Button type="primary"> Available Orders </Button>
+                <Table
+                  dataSource={customerDetails}
+                  columns={columns}
+                  rowKey="order_id"
+                />
                 <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
                   <div className="flex flex-wrap justify-center">
-                    <div className="w-full lg:w-9/12 px-4">
-                      <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                        An artist of considerable range, Jenna the name taken by
-                        Melbourne-raised, Brooklyn-based Nick Murphy writes,
-                        performs and records all of his own music, giving it a
-                        warm, intimate feel with a solid groove structure. An
-                        artist of considerable range.
-                      </p>
-                      <a
-                        href="#pablo"
-                        className="font-normal text-lightBlue-500"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        Show more
-                      </a>
-                    </div>
+                    <div className="w-full lg:w-9/12 px-4"></div>
                   </div>
                 </div>
               </div>

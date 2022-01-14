@@ -12,12 +12,15 @@ export default function Login() {
       email: values.email,
       password: values.password,
     });
-    console.log("session", session);
-    const uid = session.user.user_metadata.uid;
+    const uid = session?.user.user_metadata.uid;
     if (user) {
       const { data } = await supabase.from("users").select().eq("uid", uid);
       console.log("data", data);
-      history.push("/rider-profile");
+      if (data[0]?.is_rider) {
+        history.push("/rider-profile");
+      } else {
+        setErrorMessage("You dont have a permission to login as Rider!");
+      }
     }
 
     if (error) {
@@ -25,9 +28,6 @@ export default function Login() {
     }
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
   return (
     <>
       <div className="container mx-auto px-4 h-full">
