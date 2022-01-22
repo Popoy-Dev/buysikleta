@@ -3,12 +3,15 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 // components
-import { Modal, Button, message, Table, Space } from "antd";
+import { Modal, Button, message, Table, Space, Menu, Dropdown } from "antd";
 import IndexDropdown from "components/Dropdowns/IndexDropdown.js";
 import { supabase } from "./../../supabaseClient";
 import SignUp from "./../../components/Forms/SignUp";
 import LoginForm from "./../../components/Forms/LoginForm";
+import { DownOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
 export default function Navbar({ addCartList }) {
+  let history = useHistory();
   const info = supabase.auth.session();
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const [userDetails, setUserDetails] = useState({});
@@ -57,6 +60,7 @@ export default function Navbar({ addCartList }) {
       {
         firstname: values.firstname,
         lastname: values.lastname,
+        contact_number: values.contact_number,
         username: values.username,
         address: values.address,
         barangay: values.barangay,
@@ -174,6 +178,28 @@ export default function Navbar({ addCartList }) {
     localStorage.removeItem("lists");
     window.location.reload(false);
   };
+
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => history.push("/track-orders")}
+        >
+          Track Orders
+        </a>
+      </Menu.Item>
+
+      <Menu.Item danger>
+        {" "}
+        <Button danger onClick={signOut}>
+          Logout
+        </Button>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
       <Modal
@@ -236,7 +262,6 @@ export default function Navbar({ addCartList }) {
               {userData && Object.keys(userData).length !== 0 ? (
                 <>
                   <li className="pt-4 flex items-center">
-                    <p className="font-bold pr-4">{` ${userData[0].firstname} ${userData[0].lastname}`}</p>
                     {cartList ? (
                       <a
                         href="#"
@@ -268,9 +293,15 @@ export default function Navbar({ addCartList }) {
                       </a>
                     )}
 
-                    <Button danger onClick={signOut}>
-                      Logout
-                    </Button>
+                    <Dropdown overlay={menu} trigger={["click"]}>
+                      <a
+                        className="ant-dropdown-link"
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        {` ${userData[0].firstname} ${userData[0].lastname}`}{" "}
+                        <DownOutlined />
+                      </a>
+                    </Dropdown>
                   </li>
                 </>
               ) : (

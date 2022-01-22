@@ -5,6 +5,7 @@ import Navbar from "components/Navbars/AuthNavbar.js";
 import Footer from "components/Footers/Footer.js";
 import { supabase } from "./../supabaseClient";
 import { Button, Table, Modal } from "antd";
+import moment from "moment";
 
 export default function Profile() {
   const info = supabase.auth.session();
@@ -22,10 +23,13 @@ export default function Profile() {
     const { data } = await supabase.from("users").select().eq("uid", uid);
     setRiderInfo(data);
   };
+
+  console.log("uid", uid);
   const orderLists = async () => {
     const { data } = await supabase
       .from("orders")
       .select()
+      .eq("user_id", uid)
       .is("rider_uid", null);
     // .not("rider_uid", "is", null);
     setOrderDetailLists(data);
@@ -34,6 +38,7 @@ export default function Profile() {
     const { data } = await supabase
       .from("orders")
       .select()
+      .eq("user_id", uid)
       // .is("rider_uid", null);
       .not("rider_uid", "is", null);
     setOrderDetailLists(data);
@@ -41,11 +46,13 @@ export default function Profile() {
 
   const orderDetail = () => {
     orderDetailLists?.map(async (list) => {
+      console.log("list", list);
       const { data } = await supabase
         .from("users")
         .select("firstname, lastname, address, barangay")
         .eq("uid", list.user_id);
       data[0].order_id = list.order_id;
+      data[0].created_at = list.created_at;
 
       setCustomerDetails((oldArray) => [...oldArray, ...data]);
     });
@@ -67,13 +74,21 @@ export default function Profile() {
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "firstname",
-      key: "firstname",
+      title: "Date",
+      dataIndex: "created_at",
+      key: "created_at",
       render: (text, record) => (
-        <p>
-          {record.firstname} {record.lastname}
-        </p>
+        <>
+          <p>
+            {moment(record.created_at)
+              .utcOffset("+0100")
+              .format("MMMM Do YYYY, h:mm a")}
+          </p>
+          {/* <p>{moment(record.firstname).format("MMMM Do YYYY, h:mm:ss a")}</p> */}
+
+          {/* <p>{moment.unix(record.created_at).format("MM/DD/YYYY")}</p> */}
+          {/* <p>{record.created_at}</p> */}
+        </>
       ),
     },
     {
@@ -113,7 +128,6 @@ export default function Profile() {
     if (data) {
       setIsOrderInfoModal(false);
       orderLists();
-      window.location.reload(false);
     }
   };
 
@@ -145,18 +159,17 @@ export default function Profile() {
       key: "quantity",
     },
   ];
-
   const handleAvailableOrders = () => {
     setCustomerDetails([]);
     orderLists();
     setAvailableOrders(true);
   };
-
   const handlePendingOrders = () => {
     setCustomerDetails([]);
     pendingOrderLists();
     setAvailableOrders(false);
   };
+  console.log("customerDetails", customerDetails);
   return (
     <>
       <Modal
@@ -182,8 +195,8 @@ export default function Profile() {
           <div
             className="absolute top-0 w-full h-full bg-center bg-cover"
             style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80')",
+              backgroundColor: " grey",
+              // "url('https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80')",
             }}
           >
             <span
@@ -211,7 +224,7 @@ export default function Profile() {
             </svg>
           </div>
         </section>
-        <section className="relative py-16 bg-blueGray-200">
+        <section className="relative py-4 bg-blueGray-200">
           <div className="container mx-auto px-4">
             <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
               <div className="px-6">

@@ -12,7 +12,7 @@ export default function Navbar(props) {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const signout = async () => {
     await supabase.auth.signOut();
-    history.push("/auth/login");
+    history.push("/");
   };
   return (
     <>

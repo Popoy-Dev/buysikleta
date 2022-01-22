@@ -13,6 +13,7 @@ import Auth from "layouts/Auth.js";
 
 import Landing from "views/Landing.js";
 import Products from "views/Products.js";
+import TrackOrders from "views/TrackOrders";
 import Profile from "views/Profile.js";
 import Index from "views/Index.js";
 
@@ -29,6 +30,7 @@ ReactDOM.render(
       <Route path="/romantic_baboy" exact component={Products} />
       <Route path="/starbucks" exact component={Products} />
       <Route path="/rider-profile" exact component={Profile} />
+      <Route path="/track-orders" exact component={TrackOrders} />
       <Route path="/" exact component={Index} />
       {/* add redirect for first page */}
       <Redirect from="*" to="/" />

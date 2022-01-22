@@ -113,22 +113,6 @@ export default function Login() {
                 </Form>
               </div>
             </div>
-            <div className="flex flex-wrap mt-6 relative">
-              <div className="w-1/2">
-                <a
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  className="text-blueGray-200"
-                >
-                  <small>Forgot password?</small>
-                </a>
-              </div>
-              <div className="w-1/2 text-right">
-                <Link to="/auth/register" className="text-blueGray-200">
-                  <small>Create new account</small>
-                </Link>
-              </div>
-            </div>
           </div>
         </div>
       </div>

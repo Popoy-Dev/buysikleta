@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Button, Select } from "antd";
+import { Form, Input, Button, Select, InputNumber } from "antd";
 
 const SignUp = ({ onSaveData, handleCancel }) => {
   const { Option } = Select;
@@ -21,6 +21,16 @@ const SignUp = ({ onSaveData, handleCancel }) => {
           rules={[{ required: true, message: "Please input your lastname!" }]}
         >
           <Input />
+        </Form.Item>
+        <Form.Item
+          label="Contact Number"
+          name="contact_number"
+          labelAlign="left"
+          rules={[
+            { required: true, message: "Please input your contact number!" },
+          ]}
+        >
+          <InputNumber min={10} style={{ width: "100%" }} />
         </Form.Item>
         <Form.Item
           label="Address"
