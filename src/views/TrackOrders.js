@@ -4,7 +4,7 @@ import Navbar from "components/Navbars/AuthNavbar.js";
 
 import Footer from "components/Footers/Footer.js";
 import { supabase } from "./../supabaseClient";
-import { Button, Table, Modal } from "antd";
+import { Button, Table, Modal, message } from "antd";
 import moment from "moment";
 
 export default function Profile() {
@@ -75,7 +75,8 @@ export default function Profile() {
   };
 
   const viewRiderDetails = async (record) => {
-    if (record["rider_uid"] === null) alert("null");
+    if (record["rider_uid"] === null)
+      message.error("No rider assign to your order ", 10);
     const { data } = await supabase
       .from("users")
       .select("firstname, lastname, contact_number, barangay")
@@ -99,10 +100,6 @@ export default function Profile() {
               .utcOffset("+0100")
               .format("MMMM Do YYYY, h:mm a")}
           </p>
-          {/* <p>{moment(record.firstname).format("MMMM Do YYYY, h:mm:ss a")}</p> */}
-
-          {/* <p>{moment.unix(record.created_at).format("MM/DD/YYYY")}</p> */}
-          {/* <p>{record.created_at}</p> */}
         </>
       ),
     },
@@ -236,10 +233,6 @@ export default function Profile() {
           columns={riderDetailsColumn}
           rowKey="order_id"
         />
-        {/* {order && order[0]?.orders?.map((item) => <>
-          <p className="inline">{item.name}</p>
-          <p className="inline">{item.name}</p>
-        </>)} */}
       </Modal>
       <Navbar transparent />
       <main className="profile-page">
