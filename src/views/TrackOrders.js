@@ -10,21 +10,22 @@ import moment from "moment";
 export default function Profile() {
   const info = supabase.auth.session();
   const uid = info?.user.user_metadata.uid;
-  const [riderInfo, setRiderInfo] = useState("");
+  const [profileInfo, setProfileInfo] = useState("");
   const [orderDetailLists, setOrderDetailLists] = useState([]);
   const [customerDetails, setCustomerDetails] = useState([]);
   const [orderId, setOrderId] = useState(null);
   const [isOrderInfoModal, setIsOrderInfoModal] = useState(false);
+  const [isRiderInfoModal, setIsRiderInfoModal] = useState(false);
   const [modalOrderLists, setModalOrderLists] = useState({});
   const [order, setOrder] = useState({});
   const [availableOrders, setAvailableOrders] = useState(true);
+  const [riderInfo, setRiderInfo] = useState({});
 
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
-    setRiderInfo(data);
+    setProfileInfo(data);
   };
 
-  console.log("uid", uid);
   const orderLists = async () => {
     const { data } = await supabase
       .from("orders")
@@ -46,13 +47,14 @@ export default function Profile() {
 
   const orderDetail = () => {
     orderDetailLists?.map(async (list) => {
-      console.log("list", list);
       const { data } = await supabase
         .from("users")
         .select("firstname, lastname, address, barangay")
         .eq("uid", list.user_id);
+
       data[0].order_id = list.order_id;
       data[0].created_at = list.created_at;
+      data[0].rider_uid = list.rider_uid;
 
       setCustomerDetails((oldArray) => [...oldArray, ...data]);
     });
@@ -70,6 +72,19 @@ export default function Profile() {
     setOrderId(record.order_id);
     setIsOrderInfoModal(true);
     setModalOrderLists(record);
+  };
+
+  const viewRiderDetails = async (record) => {
+    if (record["rider_uid"] === null) alert("null");
+    const { data } = await supabase
+      .from("users")
+      .select("firstname, lastname, contact_number, barangay")
+      .eq("uid", record["rider_uid"]);
+    record["rider_firstname"] = data[0].firstname;
+    record["rider_lastname"] = data[0].lastname;
+    record["rider_contact_number"] = data[0].contact_number;
+    setIsRiderInfoModal(true);
+    setRiderInfo([record]);
   };
 
   const columns = [
@@ -91,18 +106,9 @@ export default function Profile() {
         </>
       ),
     },
+
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      render: (text, record) => (
-        <p>
-          {record.address} {record.barangay}
-        </p>
-      ),
-    },
-    {
-      title: "Orders",
+      title: "Order Details",
       dataIndex: "orders",
       key: "orders",
       render: (text, record) => (
@@ -115,9 +121,25 @@ export default function Profile() {
         </Button>
       ),
     },
+
+    {
+      title: "Rider Details",
+      dataIndex: "orders",
+      key: "orders",
+      render: (text, record) => (
+        <Button
+          style={{ backgroundColor: "#f0c83a" }}
+          onClick={() => viewRiderDetails(record)}
+          className="pr-2"
+        >
+          Order Details
+        </Button>
+      ),
+    },
   ];
   const handleOrderDetailsCancel = () => {
     setIsOrderInfoModal(false);
+    setIsRiderInfoModal(false);
   };
 
   const handleOrderDetailsOk = async () => {
@@ -148,15 +170,29 @@ export default function Profile() {
       dataIndex: "name",
       key: "name",
     },
+
     {
       title: "Price",
-      dataIndex: "price",
-      key: "price",
+      dataIndex: "rider_firstname",
+      key: "rider_firstname",
     },
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
+    },
+  ];
+
+  const riderDetailsColumn = [
+    {
+      title: "Name",
+      dataIndex: "firstname",
+      key: "firstname",
+      render: (text, record) => (
+        <p>
+          {record.firstname} {record.lastname}
+        </p>
+      ),
     },
   ];
   const handleAvailableOrders = () => {
@@ -169,19 +205,35 @@ export default function Profile() {
     pendingOrderLists();
     setAvailableOrders(false);
   };
-  console.log("customerDetails", customerDetails);
+
   return (
     <>
       <Modal
         width={1000}
         title="Order Details"
         visible={isOrderInfoModal}
-        onOk={handleOrderDetailsOk}
+        onOk={handleOrderDetailsCancel}
         onCancel={handleOrderDetailsCancel}
       >
         <Table
           dataSource={order[0]?.orders}
           columns={orderColumns}
+          rowKey="order_id"
+        />
+      </Modal>
+
+      {/* rider modal info */}
+
+      <Modal
+        width={1000}
+        title="Rider Details"
+        visible={isRiderInfoModal}
+        onOk={handleOrderDetailsCancel}
+        onCancel={handleOrderDetailsCancel}
+      >
+        <Table
+          dataSource={riderInfo.length && riderInfo}
+          columns={riderDetailsColumn}
           rowKey="order_id"
         />
         {/* {order && order[0]?.orders?.map((item) => <>
@@ -245,14 +297,14 @@ export default function Profile() {
                     <div className="flex justify-center py-4 lg:pt-4 pt-8"></div>
                   </div>
                 </div>
-                {riderInfo && (
+                {profileInfo && (
                   <div className="text-center mt-12">
                     <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-                      {`${riderInfo[0]?.firstname}   ${riderInfo[0]?.lastname} `}
+                      {`${profileInfo[0]?.firstname}   ${profileInfo[0]?.lastname} `}
                     </h3>
                     <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                       <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>{" "}
-                      {`${riderInfo[0]?.address}  ${riderInfo[0]?.barangay}  `}
+                      {`${profileInfo[0]?.address}  ${profileInfo[0]?.barangay}  `}
                     </div>
                   </div>
                 )}
