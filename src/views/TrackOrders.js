@@ -75,17 +75,19 @@ export default function Profile() {
   };
 
   const viewRiderDetails = async (record) => {
-    if (record["rider_uid"] === null)
-      message.error("No rider assign to your order ", 10);
-    const { data } = await supabase
-      .from("users")
-      .select("firstname, lastname, contact_number, barangay")
-      .eq("uid", record["rider_uid"]);
-    record["rider_firstname"] = data[0].firstname;
-    record["rider_lastname"] = data[0].lastname;
-    record["rider_contact_number"] = data[0].contact_number;
-    setIsRiderInfoModal(true);
-    setRiderInfo([record]);
+    if (record["rider_uid"] === null) {
+      message.error("No rider assign to your order ", 6);
+    } else {
+      const { data } = await supabase
+        .from("users")
+        .select("firstname, lastname, contact_number, barangay")
+        .eq("uid", record["rider_uid"]);
+      record["rider_firstname"] = data[0].firstname;
+      record["rider_lastname"] = data[0].lastname;
+      record["rider_contact_number"] = data[0].contact_number;
+      setIsRiderInfoModal(true);
+      setRiderInfo([record]);
+    }
   };
 
   const columns = [
@@ -170,8 +172,8 @@ export default function Profile() {
 
     {
       title: "Price",
-      dataIndex: "rider_firstname",
-      key: "rider_firstname",
+      dataIndex: "price",
+      key: "price",
     },
     {
       title: "Quantity",
@@ -187,9 +189,14 @@ export default function Profile() {
       key: "firstname",
       render: (text, record) => (
         <p>
-          {record.firstname} {record.lastname}
+          {record.rider_firstname} {record.rider_lastname}
         </p>
       ),
+    },
+    {
+      title: "Contact",
+      dataIndex: "rider_contact_number",
+      key: "rider_contact_number",
     },
   ];
   const handleAvailableOrders = () => {
@@ -315,17 +322,33 @@ export default function Profile() {
                 </Button>
                 <br />
                 {availableOrders === true ? (
-                  <Table
-                    dataSource={customerDetails}
-                    columns={columns}
-                    rowKey="order_id"
-                  />
+                  <>
+                    <h1
+                      className="text-center text-3xl my-6 font-extrabold "
+                      style={{ color: "#6da2e8" }}
+                    >
+                      Available Order/s
+                    </h1>
+                    <Table
+                      dataSource={customerDetails}
+                      columns={columns}
+                      rowKey="order_id"
+                    />
+                  </>
                 ) : (
-                  <Table
-                    dataSource={customerDetails}
-                    columns={columns}
-                    rowKey="order_id"
-                  />
+                  <>
+                    <h1
+                      className="text-center text-3xl my-6 font-extrabold "
+                      style={{ color: "#c7a76b" }}
+                    >
+                      Pending Order/s
+                    </h1>
+                    <Table
+                      dataSource={customerDetails}
+                      columns={columns}
+                      rowKey="order_id"
+                    />
+                  </>
                 )}
                 {}
 
