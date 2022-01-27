@@ -165,6 +165,8 @@ export default function Profile() {
         visible={isOrderInfoModal}
         onOk={handleOrderDetailsOk}
         onCancel={handleOrderDetailsCancel}
+        okText="Order Delivered"
+        cancelText="Return"
       >
         <Table
           dataSource={order[0]?.orders}

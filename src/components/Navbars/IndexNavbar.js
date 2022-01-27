@@ -23,6 +23,7 @@ export default function Navbar({ addCartList }) {
 
   const [visible, setVisible] = useState(false);
 
+  console.log("cartList", cartList);
   useEffect(() => {
     setCartList(JSON.parse(localStorage.getItem("lists")));
   }, []);
@@ -147,7 +148,9 @@ export default function Navbar({ addCartList }) {
     const items = JSON.parse(localStorage.getItem("lists"));
     console.log("items", items);
 
-    const filtered = items.filter((item) => item.itemId !== record.itemId);
+    const filtered = items.filter(
+      (item) => item.product_id !== record.product_id
+    );
     console.log("filtered", filtered);
     // const setUpdatedItems =
     localStorage.setItem("lists", JSON.stringify(filtered));
@@ -212,6 +215,8 @@ export default function Navbar({ addCartList }) {
         onOk={onSubmit}
         onCancel={() => setVisible(false)}
         width={1000}
+        okText="Check Out"
+        cancelText="Cancel"
       >
         <Table dataSource={cartList} columns={columns} rowKey="itemId" />
       </Modal>

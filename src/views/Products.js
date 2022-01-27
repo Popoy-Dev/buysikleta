@@ -40,12 +40,11 @@ export default function Products() {
   };
   const onChange = (value) => {};
   const onFinish = (values) => {
+    console.log("values", values);
     setAddCartList((oldArray) => [...oldArray, values]);
 
     const data = [...addCartList, values];
     localStorage.setItem("lists", JSON.stringify(data));
-
-    console.log("values", values);
   };
   useEffect(() => {}, [addCartList]);
   const onFinishFailed = (errorInfo) => {
@@ -94,6 +93,7 @@ export default function Products() {
                               initialValues={{
                                 name: list.name,
                                 price: list.price,
+                                product_id: list.product_id,
                               }}
                               onFinish={onFinish}
                               onFinishFailed={onFinishFailed}
@@ -134,6 +134,14 @@ export default function Products() {
                                 hidden={true}
                               >
                                 <Input initialvalues={list.price} />
+                              </Form.Item>
+
+                              <Form.Item
+                                name="product_id"
+                                labelCol={{ span: 4 }}
+                                hidden={true}
+                              >
+                                <Input initialvalues={list.product_id} />
                               </Form.Item>
 
                               <Form.Item>
