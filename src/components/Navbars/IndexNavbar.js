@@ -87,16 +87,19 @@ export default function Navbar({ addCartList }) {
       email: values.email,
       password: values.password,
     });
+    if (user) {
+      message.success(
+        "This is a prompt message for success, and it will disappear in 10 seconds",
+        10
+      );
 
-    message.success(
-      "This is a prompt message for success, and it will disappear in 10 seconds",
-      10
-    );
-    window.location.reload(false);
-
-    const { data } = await supabase.from("users").select().eq("uid", uid);
-    setUserData(data);
-    setIsLoginModalVisible(false);
+      const { data } = await supabase.from("users").select().eq("uid", uid);
+      setUserData(data);
+      setIsLoginModalVisible(false);
+      window.location.reload(false);
+    } else {
+      message.error("Wrong Email or Password", 10);
+    }
   };
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();

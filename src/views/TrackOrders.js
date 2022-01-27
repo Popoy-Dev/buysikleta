@@ -99,7 +99,7 @@ export default function Profile() {
         <>
           <p>
             {moment(record.created_at)
-              .utcOffset("+0100")
+              .utcOffset("+0800")
               .format("MMMM Do YYYY, h:mm a")}
           </p>
         </>
