@@ -17,24 +17,31 @@ export default function Profile() {
   const [modalOrderLists, setModalOrderLists] = useState({});
   const [order, setOrder] = useState({});
   const [availableOrders, setAvailableOrders] = useState(true);
+  const [realtime, setRealTime] = useState({});
 
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
     setRiderInfo(data);
   };
+
+  const mySubscription = supabase
+    .from("orders")
+    .on("*", (payload) => {
+      setRealTime(payload.old);
+    })
+    .subscribe();
+
   const orderLists = async () => {
     const { data } = await supabase
       .from("orders")
       .select()
       .is("rider_uid", null);
-    // .not("rider_uid", "is", null);
     setOrderDetailLists(data);
   };
   const pendingOrderLists = async () => {
     const { data } = await supabase
       .from("orders")
       .select()
-      // .is("rider_uid", null);
       .not("rider_uid", "is", null);
     setOrderDetailLists(data);
   };
@@ -58,6 +65,12 @@ export default function Profile() {
   useEffect(() => {
     orderDetail();
   }, [orderDetailLists]);
+
+  useEffect(() => {
+    if (Object.keys(realtime).length !== 0) {
+      realtime && window.location.reload(false);
+    }
+  }, [realtime]);
 
   const viewOrder = (record) => {
     setOrderId(record.order_id);
@@ -173,10 +186,6 @@ export default function Profile() {
           columns={orderColumns}
           rowKey="order_id"
         />
-        {/* {order && order[0]?.orders?.map((item) => <>
-          <p className="inline">{item.name}</p>
-          <p className="inline">{item.name}</p>
-        </>)} */}
       </Modal>
       <Navbar transparent />
       <main className="profile-page">

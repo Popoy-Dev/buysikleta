@@ -32,7 +32,6 @@ export default function Products() {
       .select()
       .eq("shop", shopName);
     setProductList(data);
-    console.log("datas list", data);
   };
 
   const handleChange = (value) => {
@@ -40,7 +39,6 @@ export default function Products() {
   };
   const onChange = (value) => {};
   const onFinish = (values) => {
-    console.log("values", values);
     setAddCartList((oldArray) => [...oldArray, values]);
 
     const data = [...addCartList, values];

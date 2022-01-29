@@ -23,7 +23,6 @@ export default function Navbar({ addCartList }) {
 
   const [visible, setVisible] = useState(false);
 
-  console.log("cartList", cartList);
   useEffect(() => {
     setCartList(JSON.parse(localStorage.getItem("lists")));
   }, []);
@@ -143,19 +142,11 @@ export default function Navbar({ addCartList }) {
   ];
 
   const deleteItem = (record) => {
-    console.log("delete", record);
-
     const items = JSON.parse(localStorage.getItem("lists"));
-    console.log("items", items);
-
     const filtered = items.filter(
       (item) => item.product_id !== record.product_id
     );
-    console.log("filtered", filtered);
-    // const setUpdatedItems =
     localStorage.setItem("lists", JSON.stringify(filtered));
-
-    // const getUpdatedItems =
     const getUpdatedItems = setCartList(
       JSON.parse(localStorage.getItem("lists"))
     );
@@ -164,7 +155,6 @@ export default function Navbar({ addCartList }) {
   const handleModal = () => {
     setCartList(JSON.parse(localStorage.getItem("lists")));
     setVisible(true);
-    console.log(JSON.parse(localStorage.getItem("lists")));
   };
 
   const onSubmit = async () => {

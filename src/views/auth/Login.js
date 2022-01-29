@@ -15,7 +15,6 @@ export default function Login() {
     const uid = session?.user.user_metadata.uid;
     if (user) {
       const { data } = await supabase.from("users").select().eq("uid", uid);
-      console.log("data", data);
       if (data[0]?.is_rider) {
         history.push("/rider-profile");
       } else {
