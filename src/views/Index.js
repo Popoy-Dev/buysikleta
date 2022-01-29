@@ -4,10 +4,9 @@ import { Link } from "react-router-dom";
 
 import IndexNavbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
-
 import romanticBaboy from "./../assets/img/romantic_baboy.jpg";
-import starbucksStore from "./../assets/img/starbucks.png";
-import breadTalk from "./../assets/img/BreadTalk-logo.jpg";
+import infinitee_pares_logo from "./../assets/img/Infinitee_pares_logo.jpg";
+import mcArthur from "./../assets/img/mcArthur.jpg";
 import { useHistory } from "react-router-dom";
 
 // ant design components
@@ -102,12 +101,50 @@ const Index = () => {
                     ></polygon>
                   </svg>
                   <h4 className="text-xl font-bold text-white">
-                    Bench Online Store
+                    Asian Restaurant · Bubble Tea Shop
                   </h4>
-                  <p className="text-md font-light mt-2 text-white">
-                    Bench is a Philippine retail brand of clothing, bags,
-                    accessories, footwear and fragrances owned by Suyen
-                    Corporation.
+                  <br />
+
+                  <svg
+                    className="flex-1 w-8 h-8 fill-current inline"
+                    viewBox="0 0 24 24"
+                    style={{ display: "inline" }}
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <p
+                    className=" mt-4 pt-4 text-bold"
+                    style={{ display: "inline" }}
+                  >
+                    #808 Gen. Alejo Santos highway Poblacion Bustos, Bulacan
+                    3007 Bustos, Philippines
+                  </p>
+                  <br />
+                  <svg
+                    className="flex-1 w-8 h-8 fill-current inline"
+                    viewBox="0 0 24 24"
+                    style={{ display: "inline" }}
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <p className="text-bold" style={{ display: "inline" }}>
+                    Store hours: 10:00AM – 10:00 PM
                   </p>
                 </blockquote>
                 <div className="text-center mb-4">
@@ -128,7 +165,7 @@ const Index = () => {
               >
                 <img
                   alt="..."
-                  src={starbucksStore}
+                  src={mcArthur}
                   className="w-full align-middle rounded-t-lg"
                 />
                 <blockquote className="relative p-8 mb-4">
@@ -143,17 +180,51 @@ const Index = () => {
                       className=" fill-current"
                     ></polygon>
                   </svg>
-                  <h4 className="text-xl font-bold text-white">Coffee Shop</h4>
-                  <p className="text-md font-light mt-2 text-white">
-                    Starbucks Corporation is an American multinational chain of
-                    coffeehouses
+                  <br />
+                  <h4 className="text-xl font-bold text-white">
+                    MacArthur Inasal
+                  </h4>
+                  <svg
+                    className="flex-1 w-8 h-8 fill-current inline"
+                    viewBox="0 0 24 24"
+                    style={{ display: "inline" }}
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <p className=" " style={{ display: "inline" }}>
+                    Liciada, Bustos, Bulacan
                   </p>
+                  <br />
+                  <svg
+                    className="flex-1 w-8 h-8 fill-current inline"
+                    viewBox="0 0 24 24"
+                    style={{ display: "inline" }}
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
+                  </svg>
+                  <p style={{ display: "inline" }}>0939 710 1702</p>
                 </blockquote>
                 <div className="text-center mb-4">
                   <Button
                     shape="round"
                     size="large"
-                    onClick={() => history.push("/starbucks")}
+                    onClick={() => history.push("/macarthur")}
                   >
                     Shop Now
                   </Button>
@@ -167,7 +238,7 @@ const Index = () => {
               >
                 <img
                   alt="..."
-                  src={breadTalk}
+                  src={infinitee_pares_logo}
                   className="w-full align-middle rounded-t-lg"
                 />
                 <blockquote className="relative p-8 mb-4">
@@ -182,14 +253,70 @@ const Index = () => {
                       className="text-green-300 fill-current"
                     ></polygon>
                   </svg>
-                  <h4 className="text-xl font-bold text-white">Bread Shop</h4>
-                  <p className="text-md font-light mt-2 text-white">
-                    BreadTalk Group Private Limited is a Singaporean
-                    multinational food and beverage corporation
+                  <h4 className="text-xl font-bold text-white">
+                    Infinitee Pares atbp.
+                  </h4>
+                  <svg
+                    className="flex-1 w-8 h-8 fill-current inline"
+                    viewBox="0 0 24 24"
+                    style={{ display: "inline" }}
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <p className=" " style={{ display: "inline" }}>
+                    Liciada, Bustos, Bulacan
+                  </p>
+                  <br />
+
+                  <svg
+                    className="flex-1 w-8 h-8 fill-current inline"
+                    viewBox="0 0 24 24"
+                    style={{ display: "inline" }}
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
+                  </svg>
+
+                  <p style={{ display: "inline" }}>09215913398</p>
+                  <br />
+                  <svg
+                    className="flex-1 w-8 h-8 fill-current inline"
+                    viewBox="0 0 24 24"
+                    style={{ display: "inline" }}
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+
+                  <p className="text-bold" style={{ display: "inline" }}>
+                    Store hours: 10:00AM – 9:00PM
                   </p>
                 </blockquote>
                 <div className="text-center mb-4">
-                  <Button shape="round" size="large">
+                  <Button
+                    shape="round"
+                    size="large"
+                    onClick={() => history.push("/infinitee_pares")}
+                  >
                     Shop Now
                   </Button>
                 </div>

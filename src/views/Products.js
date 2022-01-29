@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import starbucksCover from "./../assets/img/starbucks-cover.png";
+import mcArthur from "./../assets/img/mcArthur.jpg";
 import benchStoreMain from "./../assets/img/bench-store-main.jpg";
 import romanticBaboy from "./../assets/img/romantic_baboy.jpg";
+import infinitee_pares_logo from "./../assets/img/Infinitee_pares_logo.jpg";
 // components
 import Navbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
@@ -16,8 +17,8 @@ export default function Products() {
 
   const bannerImage = () => {
     if (queryString === "/romantic_baboy") setMainImage(romanticBaboy);
-    if (queryString === "/starbucks") setMainImage(starbucksCover);
-    if (queryString === "/bench") setMainImage(benchStoreMain);
+    if (queryString === "/macarthur") setMainImage(mcArthur);
+    if (queryString === "/infinitee_pares") setMainImage(infinitee_pares_logo);
   };
 
   useEffect(() => {
@@ -37,6 +38,10 @@ export default function Products() {
   const handleChange = (value) => {
     console.log(`selected ${value}`);
   };
+
+  useEffect(() => {
+    setAddCartList(JSON.parse(localStorage.getItem("lists")));
+  }, []);
   const onChange = (value) => {};
   const onFinish = (values) => {
     setAddCartList((oldArray) => [...oldArray, values]);
