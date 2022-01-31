@@ -11,6 +11,7 @@ export default function Profile() {
   const uid = info?.user.user_metadata.uid;
   const [riderInfo, setRiderInfo] = useState("");
   const [orderDetailLists, setOrderDetailLists] = useState([]);
+  const [pendingDetailLists, setPendingDetailLists] = useState([]);
   const [customerDetails, setCustomerDetails] = useState([]);
   const [orderId, setOrderId] = useState(null);
   const [isOrderInfoModal, setIsOrderInfoModal] = useState(false);
@@ -18,12 +19,14 @@ export default function Profile() {
   const [order, setOrder] = useState({});
   const [availableOrders, setAvailableOrders] = useState(true);
   const [realtime, setRealTime] = useState({});
+  const [pendingOrderDetails, setPendingOrderDetails] = useState([]);
 
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
+    console.log("user profile", data);
     setRiderInfo(data);
   };
-
+  console.log("customerDetails", customerDetails);
   const mySubscription = supabase
     .from("orders")
     .on("*", (payload) => {
@@ -36,6 +39,7 @@ export default function Profile() {
       .from("orders")
       .select()
       .is("rider_uid", null);
+    console.log("oder lsit", data);
     setOrderDetailLists(data);
   };
   const pendingOrderLists = async () => {
@@ -43,9 +47,40 @@ export default function Profile() {
       .from("orders")
       .select()
       .not("rider_uid", "is", null);
-    setOrderDetailLists(data);
+    console.log("datat", data);
+    setPendingDetailLists(data);
+  };
+  console.log("riderInfo", riderInfo);
+  useEffect(() => {
+    pendingDetail();
+  }, [pendingDetailLists]);
+
+  const pendingDetail = () => {
+    pendingDetailLists?.map(async (list) => {
+      const { data } = await supabase
+        .from("orders")
+        .select()
+        .eq("rider_uid", riderInfo[0].uid);
+      console.log("rider assigned", data);
+
+      // setPendingOrderDetails([]);
+      setPendingOrderDetails((oldArray) => [...oldArray, ...data]);
+    });
   };
 
+  useEffect(() => {
+    orderDetailLists?.map(async (list) => {
+      const { data } = await supabase
+        .from("users")
+        .select("firstname, lastname, address, barangay")
+        .eq("uid", list.user_id);
+      console.log("list.order_id;", list.order_id);
+      console.log("list.data", data);
+      // data[0].order_id = list.order_id;
+      setCustomerDetails([]);
+      setCustomerDetails((oldArray) => [...oldArray, ...data]);
+    });
+  }, [pendingOrderDetails]);
   const orderDetail = () => {
     orderDetailLists?.map(async (list) => {
       const { data } = await supabase
@@ -178,7 +213,7 @@ export default function Profile() {
         visible={isOrderInfoModal}
         onOk={handleOrderDetailsOk}
         onCancel={handleOrderDetailsCancel}
-        okText="Order Delivered"
+        okText="Accept Order"
         cancelText="Return"
       >
         <Table

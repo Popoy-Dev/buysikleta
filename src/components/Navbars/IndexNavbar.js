@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 // components
 import { Modal, Button, message, Table, Space, Menu, Dropdown } from "antd";
-import IndexDropdown from "components/Dropdowns/IndexDropdown.js";
+
 import { supabase } from "./../../supabaseClient";
 import SignUp from "./../../components/Forms/SignUp";
 import LoginForm from "./../../components/Forms/LoginForm";

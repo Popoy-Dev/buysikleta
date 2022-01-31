@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import mcArthur from "./../assets/img/mcArthur.jpg";
-import benchStoreMain from "./../assets/img/bench-store-main.jpg";
 import romanticBaboy from "./../assets/img/romantic_baboy.jpg";
 import infinitee_pares_logo from "./../assets/img/Infinitee_pares_logo.jpg";
 // components
 import Navbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
-import { Select, InputNumber, Form, Input, Button } from "antd";
+import { Select, InputNumber, Form, Input, Button, message } from "antd";
 import { supabase } from "./../supabaseClient";
 
 export default function Products() {
@@ -44,6 +43,7 @@ export default function Products() {
   }, []);
   const onChange = (value) => {};
   const onFinish = (values) => {
+    message.success("Item added to cart.", 10);
     setAddCartList((oldArray) => [...oldArray, values]);
 
     const data = [...addCartList, values];
