@@ -277,7 +277,7 @@ export default function Navbar({ addCartList }) {
                           className="absolute right-0 top-4 rounded-full bg-red-600 w-5 h-5 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center"
                           style={{ top: "-10px" }}
                         >
-                          {JSON.parse(localStorage.lists).length}
+                          {JSON.parse(localStorage?.lists).length}
                         </span>
                       </a>
                     ) : (
