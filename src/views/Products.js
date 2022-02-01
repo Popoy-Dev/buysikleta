@@ -37,17 +37,21 @@ export default function Products() {
   const handleChange = (value) => {
     console.log(`selected ${value}`);
   };
-
   useEffect(() => {
     setAddCartList(JSON.parse(localStorage.getItem("lists")));
   }, []);
   const onChange = (value) => {};
+
   const onFinish = (values) => {
     message.success("Item added to cart.", 10);
-    setAddCartList((oldArray) => [...oldArray, values]);
-
-    const data = [...addCartList, values];
-    localStorage.setItem("lists", JSON.stringify(data));
+    if (addCartList === null) {
+      setAddCartList([values]);
+      localStorage.setItem("lists", JSON.stringify([values]));
+    } else {
+      setAddCartList((oldArray) => [...oldArray, values]);
+      const data = [...addCartList, values];
+      localStorage.setItem("lists", JSON.stringify(data));
+    }
   };
   useEffect(() => {}, [addCartList]);
   const onFinishFailed = (errorInfo) => {
@@ -56,7 +60,11 @@ export default function Products() {
 
   return (
     <>
-      <Navbar transparent addCartList={addCartList} />
+      <Navbar
+        transparent
+        addCartList={addCartList}
+        setAddCartList={setAddCartList}
+      />
       <main>
         <section className="pb-20 bg-blueGray-200 mt-10">
           <div className="flex items-center justify-center ">

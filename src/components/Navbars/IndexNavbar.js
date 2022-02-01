@@ -10,7 +10,7 @@ import SignUp from "./../../components/Forms/SignUp";
 import LoginForm from "./../../components/Forms/LoginForm";
 import { DownOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
-export default function Navbar({ addCartList }) {
+export default function Navbar({ addCartList, setAddCartList }) {
   let history = useHistory();
   const info = supabase.auth.session();
   const [navbarOpen, setNavbarOpen] = React.useState(false);
@@ -140,12 +140,18 @@ export default function Navbar({ addCartList }) {
       ),
     },
   ];
-
+  console.log("addCartList", addCartList);
   const deleteItem = (record) => {
     const items = JSON.parse(localStorage.getItem("lists"));
     const filtered = items.filter(
       (item) => item.product_id !== record.product_id
     );
+
+    const filteredAddCartList = addCartList.filter(
+      (item) => item.product_id !== record.product_id
+    );
+    console.log("filteredAddCartList", filteredAddCartList);
+    setAddCartList(filteredAddCartList);
     localStorage.setItem("lists", JSON.stringify(filtered));
     const getUpdatedItems = setCartList(
       JSON.parse(localStorage.getItem("lists"))
