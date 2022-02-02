@@ -4,10 +4,11 @@ import Navbar from "components/Navbars/AuthNavbar.js";
 
 import Footer from "components/Footers/Footer.js";
 import { supabase } from "./../supabaseClient";
-import { Button, Table, Modal, message } from "antd";
+import { Button, Table, Modal, message, Typography } from "antd";
 import moment from "moment";
 
 export default function Profile() {
+  const { Text } = Typography;
   const info = supabase.auth.session();
   const uid = info?.user.user_metadata.uid;
   const [profileInfo, setProfileInfo] = useState("");
@@ -158,7 +159,7 @@ export default function Profile() {
           onClick={() => viewRiderDetails(record)}
           className="pr-2"
         >
-          Order Details
+          Rider Details
         </Button>
       ),
     },
@@ -245,11 +246,48 @@ export default function Profile() {
         visible={isOrderInfoModal}
         onOk={handleOrderDetailsCancel}
         onCancel={handleOrderDetailsCancel}
+        okText={availableOrders ? "Ok" : "Order Received"}
+        cancelText="Return"
       >
         <Table
           dataSource={order[0]?.orders}
           columns={orderColumns}
           rowKey="order_id"
+          summary={(pageData) => {
+            let totalpayment = 0;
+            pageData.forEach(({ price }) => {
+              totalpayment += price;
+            });
+
+            return (
+              <>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell>
+                    <Text strong>Product Total Amount</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text type="danger">₱{totalpayment}.00</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell>
+                    <Text strong>Delivery fee</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text type="danger">₱80.00</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell>
+                    <Text strong>Total</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text mark>₱{totalpayment + 80}.00</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              </>
+            );
+          }}
         />
       </Modal>
 
@@ -261,6 +299,8 @@ export default function Profile() {
         visible={isRiderInfoModal}
         onOk={handleOrderDetailsCancel}
         onCancel={handleOrderDetailsCancel}
+        okText={availableOrders ? "Ok" : "Order Received"}
+        cancelText="Return"
       >
         <Table
           dataSource={riderInfo.length && riderInfo}
