@@ -4,8 +4,9 @@ import Navbar from "components/Navbars/AuthNavbar.js";
 
 import Footer from "components/Footers/Footer.js";
 import { supabase } from "./../supabaseClient";
-import { Button, Table, Modal } from "antd";
+import { Button, Table, Modal, Typography } from "antd";
 
+const { Text } = Typography;
 export default function Profile() {
   const info = supabase.auth.session();
   const uid = info?.user.user_metadata.uid;
@@ -220,7 +221,28 @@ export default function Profile() {
         <Table
           dataSource={order[0]?.orders}
           columns={orderColumns}
-          rowKey="order_id"
+          rowKey="product_id"
+          summary={(pageData) => {
+            let totalBorrow = 0;
+            let totalpayment = 0;
+            console.log("pageData", pageData);
+            pageData.forEach(({ price }) => {
+              totalpayment += price;
+            });
+
+            return (
+              <>
+                <Table.Summary.Row key="{product_id}">
+                  <Table.Summary.Cell>
+                    <Text strong>Total</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text type="danger">{totalpayment}</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              </>
+            );
+          }}
         />
       </Modal>
       <Navbar transparent />
