@@ -244,7 +244,7 @@ export default function Profile() {
         width={1000}
         title="Order Details"
         visible={isOrderInfoModal}
-        onOk={handleOrderDetailsCancel}
+        onOk={handleOrderDetailsOk}
         onCancel={handleOrderDetailsCancel}
         okText={availableOrders ? "Ok" : "Order Received"}
         cancelText="Return"

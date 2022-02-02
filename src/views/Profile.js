@@ -199,13 +199,20 @@ export default function Profile() {
   const handleAvailableOrders = () => {
     setCustomerDetails([]);
     orderLists();
+
     setAvailableOrders(true);
   };
 
   const handlePendingOrders = () => {
-    setCustomerDetails([]);
-    pendingOrderLists();
-    setAvailableOrders(false);
+    if (pendingDisplayListDetails.length === 0) {
+      setCustomerDetails([]);
+      setAvailableOrders(false);
+      pendingOrderLists();
+    } else {
+      // setPendingDisplayListDetails([]);
+      setAvailableOrders(false);
+      setCustomerDetails([]);
+    }
   };
   return (
     <>
@@ -365,7 +372,7 @@ export default function Profile() {
                     <Table
                       dataSource={pendingDisplayListDetails}
                       columns={columns}
-                      rowKey="id"
+                      rowKey="order_id"
                     />
                   </>
                 )}
