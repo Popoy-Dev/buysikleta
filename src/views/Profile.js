@@ -70,7 +70,7 @@ export default function Profile() {
     pendingOrderDetails?.map(async (list) => {
       const { data } = await supabase
         .from("users")
-        .select("firstname, lastname, address, barangay")
+        .select("firstname, lastname, address, barangay, contact_number")
         .eq("uid", list.user_id);
       data[0].order_id = list.order_id;
       // setCustomerDetails([]);
@@ -81,7 +81,7 @@ export default function Profile() {
     orderDetailLists?.map(async (list) => {
       const { data } = await supabase
         .from("users")
-        .select("firstname, lastname, address, barangay")
+        .select("firstname, lastname, address, barangay, contact_number")
         .eq("uid", list.user_id);
       data[0].order_id = list.order_id;
 
@@ -119,6 +119,11 @@ export default function Profile() {
           {record.firstname} {record.lastname}
         </p>
       ),
+    },
+    {
+      title: "Contact Number",
+      dataIndex: "contact_number",
+      key: "firstname",
     },
     {
       title: "Address",
