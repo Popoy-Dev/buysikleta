@@ -217,27 +217,42 @@ export default function Profile() {
         onCancel={handleOrderDetailsCancel}
         okText={pendingDisplayListDetails ? "Order Delivered" : "Accept Order"}
         cancelText="Return"
+        key="{product_id}"
       >
         <Table
           dataSource={order[0]?.orders}
           columns={orderColumns}
           rowKey="product_id"
           summary={(pageData) => {
-            let totalBorrow = 0;
             let totalpayment = 0;
-            console.log("pageData", pageData);
             pageData.forEach(({ price }) => {
               totalpayment += price;
             });
 
             return (
               <>
-                <Table.Summary.Row key="{product_id}">
+                <Table.Summary.Row>
+                  <Table.Summary.Cell>
+                    <Text strong>Product Total Amount</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text type="danger">₱{totalpayment}.00</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell>
+                    <Text strong>Delivery fee</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text type="danger">₱80.00</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+                <Table.Summary.Row>
                   <Table.Summary.Cell>
                     <Text strong>Total</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell>
-                    <Text type="danger">{totalpayment}</Text>
+                    <Text mark>₱{totalpayment + 80}.00</Text>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
               </>
