@@ -20,10 +20,37 @@ export default function Profile() {
   const [order, setOrder] = useState({});
   const [availableOrders, setAvailableOrders] = useState(true);
   const [riderInfo, setRiderInfo] = useState({});
+  const [pendingNumber, setpendingNumber] = useState(0);
+  const [realtime, setRealTime] = useState({});
 
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
     setProfileInfo(data);
+  };
+
+  const mySubscription = supabase
+    .from("orders")
+    .on("*", (payload) => {
+      setRealTime(payload);
+    })
+    .subscribe();
+
+  useEffect(() => {
+    deliveredNotification();
+  }, [realtime]);
+
+  useEffect(() => {
+    deliveredNotification();
+  }, []);
+
+  const deliveredNotification = async () => {
+    const { data } = await supabase.from("orders").select().eq("user_id", uid);
+
+    data.map((list) => {
+      if (list.rider_uid) {
+        setpendingNumber(1 + pendingNumber);
+      }
+    });
   };
 
   const orderLists = async () => {
@@ -319,6 +346,14 @@ export default function Profile() {
                 >
                   {" "}
                   Pending Orders{" "}
+                  {pendingNumber > 0 && (
+                    <span
+                      style={{ marginTop: "-10px" }}
+                      className="absolute right-2 top-2 rounded-full bg-red-600 w-5 h-5 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center"
+                    >
+                      {pendingNumber}
+                    </span>
+                  )}
                 </Button>
                 <br />
                 {availableOrders === true ? (

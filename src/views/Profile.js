@@ -72,6 +72,7 @@ export default function Profile() {
         .from("users")
         .select("firstname, lastname, address, barangay")
         .eq("uid", list.user_id);
+      data[0].order_id = list.order_id;
       // setCustomerDetails([]);
       setPendingDisplayListDetails((oldArray) => [...oldArray, ...data]);
     });
@@ -208,7 +209,7 @@ export default function Profile() {
         visible={isOrderInfoModal}
         onOk={handleOrderDetailsOk}
         onCancel={handleOrderDetailsCancel}
-        okText="Accept Order"
+        okText={pendingDisplayListDetails ? "Order Delivered" : "Accept Order"}
         cancelText="Return"
       >
         <Table

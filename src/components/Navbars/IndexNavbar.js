@@ -3,7 +3,16 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 // components
-import { Modal, Button, message, Table, Space, Menu, Dropdown } from "antd";
+import {
+  Modal,
+  Button,
+  message,
+  Table,
+  Space,
+  Menu,
+  Dropdown,
+  Empty,
+} from "antd";
 
 import { supabase } from "./../../supabaseClient";
 import SignUp from "./../../components/Forms/SignUp";
@@ -20,7 +29,8 @@ export default function Navbar({ addCartList, setAddCartList }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
   const [cartList, setCartList] = useState({});
-
+  const [pendingNumber, setpendingNumber] = useState(0);
+  const [realtime, setRealTime] = useState({});
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -32,6 +42,31 @@ export default function Navbar({ addCartList, setAddCartList }) {
 
   const userId = Math.floor(100000 + Math.random() * 900000);
   const uid = info?.user.user_metadata.uid;
+
+  const mySubscription = supabase
+    .from("orders")
+    .on("*", (payload) => {
+      setRealTime(payload);
+    })
+    .subscribe();
+
+  useEffect(() => {
+    deliveredNotification();
+  }, [realtime]);
+
+  useEffect(() => {
+    deliveredNotification();
+  }, []);
+
+  const deliveredNotification = async () => {
+    const { data } = await supabase.from("orders").select().eq("user_id", uid);
+
+    data.map((list) => {
+      if (list.rider_uid) {
+        setpendingNumber(1 + pendingNumber);
+      }
+    });
+  };
 
   const showLoginModal = () => {
     setIsLoginModalVisible(true);
@@ -140,7 +175,6 @@ export default function Navbar({ addCartList, setAddCartList }) {
       ),
     },
   ];
-  console.log("addCartList", addCartList);
   const deleteItem = (record) => {
     const items = JSON.parse(localStorage.getItem("lists"));
     const filtered = items.filter(
@@ -191,6 +225,9 @@ export default function Navbar({ addCartList, setAddCartList }) {
         >
           Track Orders
         </a>
+        <span className="absolute right-2 top-2 rounded-full bg-red-600 w-5 h-5 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
+          {pendingNumber}
+        </span>
       </Menu.Item>
 
       <Menu.Item danger>
@@ -303,6 +340,11 @@ export default function Navbar({ addCartList, setAddCartList }) {
                         onClick={(e) => e.preventDefault()}
                       >
                         {` ${userData[0].firstname} ${userData[0].lastname}`}{" "}
+                        {pendingNumber > 0 && (
+                          <span className="absolute right-2 top-2 rounded-full bg-red-600 w-5 h-5 top right p-0 m-0 text-white font-mono text-sm  leading-tight text-center">
+                            {pendingNumber}
+                          </span>
+                        )}
                         <DownOutlined />
                       </a>
                     </Dropdown>
