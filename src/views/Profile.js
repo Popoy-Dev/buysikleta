@@ -70,6 +70,8 @@ export default function Profile() {
   }, [pendingOrderDetails]);
 
   const pendingUserList = () => {
+    console.log("pendingOrderDetails", pendingOrderDetails);
+
     pendingOrderDetails?.map(async (list) => {
       if (list.is_order_success) {
         const { data } = await supabase
@@ -228,7 +230,7 @@ export default function Profile() {
   };
 
   const handlePendingOrders = () => {
-    if (pendingDisplayListDetails.length === 0) {
+    if (pendingOrderDetails.length === 0) {
       setCustomerDetails([]);
       setAvailableOrders(false);
       pendingOrderLists();
@@ -239,20 +241,26 @@ export default function Profile() {
   };
 
   const handleOrderHistory = () => {
-    if (pendingDisplayListDetails.length === 0) {
-      pendingOrderLists();
-      setCustomerDetails([]);
-      setAvailableOrders(false);
+    if (pendingOrderDetails.length === 0) {
       setModalHistory(true);
+      pendingOrderLists();
     } else {
       setModalHistory(true);
-      setAvailableOrders(false);
     }
+    // pendingOrderLists();
+    // setCustomerDetails([]);
+    // setAvailableOrders(false);
+    // setModalHistory(true);
+    // setOrderHistory([]);
   };
 
   const showEarningModal = () => {
     setIsEarningModal(true);
-    handleOrderHistory();
+    // handleOrderHistory();
+    // setModalHistory(false);
+  };
+
+  const setCancelModalHistory = () => {
     setModalHistory(false);
   };
   return (
@@ -444,7 +452,7 @@ export default function Profile() {
                   centered
                   visible={modalHistory}
                   onOk={() => setModalHistory(false)}
-                  onCancel={() => setModalHistory(false)}
+                  onCancel={setCancelModalHistory}
                   width={1000}
                 >
                   <h1
