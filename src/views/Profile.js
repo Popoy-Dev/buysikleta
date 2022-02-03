@@ -24,6 +24,8 @@ export default function Profile() {
   const [pendingDisplayListDetails, setPendingDisplayListDetails] = useState(
     []
   );
+  const [modalHistory, setModalHistory] = useState(false);
+  const [orderHistory, setOrderHistory] = useState([]);
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
     setRiderInfo(data);
@@ -68,13 +70,23 @@ export default function Profile() {
 
   const pendingUserList = () => {
     pendingOrderDetails?.map(async (list) => {
-      const { data } = await supabase
-        .from("users")
-        .select("firstname, lastname, address, barangay, contact_number")
-        .eq("uid", list.user_id);
-      data[0].order_id = list.order_id;
-      // setCustomerDetails([]);
-      setPendingDisplayListDetails((oldArray) => [...oldArray, ...data]);
+      if (list.is_order_success) {
+        const { data } = await supabase
+          .from("users")
+          .select("firstname, lastname, address, barangay, contact_number")
+          .match({ uid: list.user_id });
+        data[0].order_id = list.order_id;
+        // setCustomerDetails([]);
+        setOrderHistory((oldArray) => [...oldArray, ...data]);
+      } else {
+        const { data } = await supabase
+          .from("users")
+          .select("firstname, lastname, address, barangay, contact_number")
+          .match({ uid: list.user_id });
+        data[0].order_id = list.order_id;
+        // setCustomerDetails([]);
+        setPendingDisplayListDetails((oldArray) => [...oldArray, ...data]);
+      }
     });
   };
   const orderDetail = () => {
@@ -213,7 +225,7 @@ export default function Profile() {
   const handleAvailableOrders = () => {
     setCustomerDetails([]);
     orderLists();
-    setPendingDisplayListDetails([]);
+    // setPendingDisplayListDetails([]);
     setAvailableOrders(true);
   };
 
@@ -223,9 +235,23 @@ export default function Profile() {
       setAvailableOrders(false);
       pendingOrderLists();
     } else {
-      // setPendingDisplayListDetails([]);
       setAvailableOrders(false);
       setCustomerDetails([]);
+    }
+  };
+
+  const handleOrderHistory = () => {
+    if (pendingDisplayListDetails.length === 0) {
+      pendingOrderLists();
+      setCustomerDetails([]);
+      setAvailableOrders(false);
+      setModalHistory(true);
+    } else {
+      setModalHistory(true);
+      // setPendingDisplayListDetails([]);
+      setAvailableOrders(false);
+      // setCustomerDetails([]);
+      // pendingOrderLists();
     }
   };
   return (
@@ -373,6 +399,34 @@ export default function Profile() {
                   {" "}
                   Pending Orders{" "}
                 </Button>
+                <Button
+                  danger
+                  onClick={handleOrderHistory}
+                  style={{ float: "right" }}
+                >
+                  History
+                </Button>
+
+                <Modal
+                  title="Order History"
+                  centered
+                  visible={modalHistory}
+                  onOk={() => setModalHistory(false)}
+                  onCancel={() => setModalHistory(false)}
+                  width={1000}
+                >
+                  <h1
+                    className="text-center text-3xl my-6 font-extrabold "
+                    style={{ color: "#c7a76b" }}
+                  >
+                    History
+                  </h1>
+                  <Table
+                    dataSource={orderHistory}
+                    columns={columns}
+                    rowKey="order_id"
+                  />
+                </Modal>
                 <br />
                 {availableOrders === true ? (
                   <>

@@ -82,13 +82,9 @@ export default function Profile() {
           .from("users")
           .select("firstname, lastname, address, barangay")
           .match({ uid: list.user_id });
-        // .eq("uid", list.user_id);
-
         data[0].order_id = list.order_id;
         data[0].created_at = list.created_at;
         data[0].rider_uid = list.rider_uid;
-
-        // setCustomerDetails((oldArray) => [...oldArray, ...data]);
         setOrderHistory((oldArray) => [...oldArray, ...data]);
       } else {
         const { data } = await supabase
