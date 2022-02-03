@@ -103,6 +103,7 @@ export default function Profile() {
   };
 
   const viewRiderDetails = async (record) => {
+    setOrderId(record.order_id);
     if (record["rider_uid"] === null) {
       message.error("No rider assign to your order ", 6);
     } else {
@@ -180,6 +181,16 @@ export default function Profile() {
     }
   };
 
+  const handleOrderReceived = async () => {
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ is_order_success: true })
+      .match({ order_id: orderId });
+    if (data) {
+      setIsRiderInfoModal(false);
+    }
+  };
+
   const modaldetailLists = async () => {
     const { data } = await supabase
       .from("orders")
@@ -197,16 +208,30 @@ export default function Profile() {
       dataIndex: "name",
       key: "name",
     },
-
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      render: (text, record) => {
+        return `₱ ${record.price}.00 `;
+      },
     },
+
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
+      render: (text, record) => {
+        return ` ${record.quantity} pc/s`;
+      },
+    },
+    {
+      title: " Computation",
+      dataIndex: "Computation",
+      key: "name",
+      render: (text, record) => {
+        return record.price * record.quantity;
+      },
     },
   ];
 
@@ -244,7 +269,7 @@ export default function Profile() {
         width={1000}
         title="Order Details"
         visible={isOrderInfoModal}
-        onOk={handleOrderDetailsOk}
+        onOk={handleOrderDetailsCancel}
         onCancel={handleOrderDetailsCancel}
         okText={availableOrders ? "Ok" : "Order Received"}
         cancelText="Return"
@@ -255,14 +280,16 @@ export default function Profile() {
           rowKey="order_id"
           summary={(pageData) => {
             let totalpayment = 0;
-            pageData.forEach(({ price }) => {
-              totalpayment += price;
+            pageData.forEach(({ price, quantity }) => {
+              totalpayment += price * quantity;
             });
 
             return (
               <>
                 <Table.Summary.Row>
-                  <Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell style={{ textAlign: "right" }}>
                     <Text strong>Product Total Amount</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell>
@@ -270,6 +297,8 @@ export default function Profile() {
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
                 <Table.Summary.Row>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
                   <Table.Summary.Cell>
                     <Text strong>Delivery fee</Text>
                   </Table.Summary.Cell>
@@ -278,6 +307,8 @@ export default function Profile() {
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
                 <Table.Summary.Row>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
                   <Table.Summary.Cell>
                     <Text strong>Total</Text>
                   </Table.Summary.Cell>
@@ -297,7 +328,7 @@ export default function Profile() {
         width={1000}
         title="Rider Details"
         visible={isRiderInfoModal}
-        onOk={handleOrderDetailsCancel}
+        onOk={handleOrderReceived}
         onCancel={handleOrderDetailsCancel}
         okText={availableOrders ? "Ok" : "Order Received"}
         cancelText="Return"
