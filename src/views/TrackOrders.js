@@ -23,6 +23,8 @@ export default function Profile() {
   const [riderInfo, setRiderInfo] = useState({});
   const [pendingNumber, setpendingNumber] = useState(0);
   const [realtime, setRealTime] = useState({});
+  const [modalHistory, setModalHistory] = useState(false);
+  const [orderHistory, setOrderHistory] = useState([]);
 
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
@@ -75,16 +77,31 @@ export default function Profile() {
 
   const orderDetail = () => {
     orderDetailLists?.map(async (list) => {
-      const { data } = await supabase
-        .from("users")
-        .select("firstname, lastname, address, barangay")
-        .eq("uid", list.user_id);
+      if (list.is_order_success) {
+        const { data } = await supabase
+          .from("users")
+          .select("firstname, lastname, address, barangay")
+          .match({ uid: list.user_id });
+        // .eq("uid", list.user_id);
 
-      data[0].order_id = list.order_id;
-      data[0].created_at = list.created_at;
-      data[0].rider_uid = list.rider_uid;
+        data[0].order_id = list.order_id;
+        data[0].created_at = list.created_at;
+        data[0].rider_uid = list.rider_uid;
 
-      setCustomerDetails((oldArray) => [...oldArray, ...data]);
+        // setCustomerDetails((oldArray) => [...oldArray, ...data]);
+        setOrderHistory((oldArray) => [...oldArray, ...data]);
+      } else {
+        const { data } = await supabase
+          .from("users")
+          .select("firstname, lastname, address, barangay")
+          .eq("uid", list.user_id);
+
+        data[0].order_id = list.order_id;
+        data[0].created_at = list.created_at;
+        data[0].rider_uid = list.rider_uid;
+
+        setCustomerDetails((oldArray) => [...oldArray, ...data]);
+      }
     });
   };
   useEffect(() => {
@@ -173,11 +190,12 @@ export default function Profile() {
   const handleOrderDetailsOk = async () => {
     const { data, error } = await supabase
       .from("orders")
-      .update({ rider_uid: uid })
+      .update({ is_order_success: true })
       .match({ order_id: orderId });
     if (data) {
       setIsOrderInfoModal(false);
-      orderLists();
+      setCustomerDetails([]);
+      pendingOrderLists();
     }
   };
 
@@ -188,6 +206,8 @@ export default function Profile() {
       .match({ order_id: orderId });
     if (data) {
       setIsRiderInfoModal(false);
+      setCustomerDetails([]);
+      pendingOrderLists();
     }
   };
 
@@ -263,13 +283,22 @@ export default function Profile() {
     setAvailableOrders(false);
   };
 
+  const handleOrderHistory = () => {
+    setModalHistory(true);
+    setCustomerDetails([]);
+    setOrderHistory([]);
+    pendingOrderLists();
+    setAvailableOrders(false);
+  };
+
   return (
     <>
       <Modal
         width={1000}
         title="Order Details"
         visible={isOrderInfoModal}
-        onOk={handleOrderDetailsCancel}
+        // change to  handleOrderDetailsOk
+        onOk={handleOrderDetailsOk}
         onCancel={handleOrderDetailsCancel}
         okText={availableOrders ? "Ok" : "Order Received"}
         cancelText="Return"
@@ -328,10 +357,10 @@ export default function Profile() {
         width={1000}
         title="Rider Details"
         visible={isRiderInfoModal}
-        onOk={handleOrderReceived}
+        onOk={orderHistory ? handleOrderDetailsCancel : handleOrderReceived}
         onCancel={handleOrderDetailsCancel}
         okText={availableOrders ? "Ok" : "Order Received"}
-        cancelText="Return"
+        cancelText={orderHistory ? "Back" : "Return"}
       >
         <Table
           dataSource={riderInfo.length && riderInfo}
@@ -429,6 +458,35 @@ export default function Profile() {
                     </span>
                   )}
                 </Button>
+                <Button
+                  danger
+                  onClick={handleOrderHistory}
+                  style={{ float: "right" }}
+                >
+                  History
+                </Button>
+
+                <Modal
+                  title="Order History"
+                  centered
+                  visible={modalHistory}
+                  onOk={() => setModalHistory(false)}
+                  onCancel={() => setModalHistory(false)}
+                  width={1000}
+                >
+                  <h1
+                    className="text-center text-3xl my-6 font-extrabold "
+                    style={{ color: "#c7a76b" }}
+                  >
+                    History
+                  </h1>
+                  <Table
+                    dataSource={orderHistory}
+                    columns={columns}
+                    rowKey="order_id"
+                  />
+                </Modal>
+
                 <br />
                 {availableOrders === true ? (
                   <>
