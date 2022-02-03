@@ -368,6 +368,16 @@ export default function Navbar({ addCartList, setAddCartList }) {
                       Sign Up
                     </button>
                   </li>
+
+                  <li className="flex items-center">
+                    <button
+                      className="bg-lightBlue-300 text-white active:bg-lightBlue-600 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
+                      type="button"
+                      onClick={showModal}
+                    >
+                      Login for riders
+                    </button>
+                  </li>
                 </>
               )}
             </ul>
