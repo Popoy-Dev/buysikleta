@@ -24,7 +24,6 @@ export default function Profile() {
   const [pendingDisplayListDetails, setPendingDisplayListDetails] = useState(
     []
   );
-
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
     setRiderInfo(data);
@@ -188,18 +187,33 @@ export default function Profile() {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      render: (text, record) => {
+        return `₱ ${record.price}.00 `;
+      },
     },
+
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
+      render: (text, record) => {
+        return ` ${record.quantity} pc/s`;
+      },
+    },
+    {
+      title: " Computation",
+      dataIndex: "Computation",
+      key: "name",
+      render: (text, record) => {
+        return record.price * record.quantity;
+      },
     },
   ];
 
   const handleAvailableOrders = () => {
     setCustomerDetails([]);
     orderLists();
-
+    setPendingDisplayListDetails([]);
     setAvailableOrders(true);
   };
 
@@ -222,7 +236,11 @@ export default function Profile() {
         visible={isOrderInfoModal}
         onOk={handleOrderDetailsOk}
         onCancel={handleOrderDetailsCancel}
-        okText={pendingDisplayListDetails ? "Order Delivered" : "Accept Order"}
+        okText={
+          pendingDisplayListDetails?.length === 0
+            ? "Accept Order"
+            : " Order Delivered"
+        }
         cancelText="Return"
         key="{product_id}"
       >
@@ -232,14 +250,16 @@ export default function Profile() {
           rowKey="product_id"
           summary={(pageData) => {
             let totalpayment = 0;
-            pageData.forEach(({ price }) => {
-              totalpayment += price;
+            pageData.forEach(({ price, quantity }) => {
+              totalpayment += price * quantity;
             });
 
             return (
               <>
                 <Table.Summary.Row>
-                  <Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell style={{ textAlign: "right" }}>
                     <Text strong>Product Total Amount</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell>
@@ -247,6 +267,8 @@ export default function Profile() {
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
                 <Table.Summary.Row>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
                   <Table.Summary.Cell>
                     <Text strong>Delivery fee</Text>
                   </Table.Summary.Cell>
@@ -255,6 +277,8 @@ export default function Profile() {
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
                 <Table.Summary.Row>
+                  <Table.Summary.Cell></Table.Summary.Cell>
+                  <Table.Summary.Cell></Table.Summary.Cell>
                   <Table.Summary.Cell>
                     <Text strong>Total</Text>
                   </Table.Summary.Cell>
