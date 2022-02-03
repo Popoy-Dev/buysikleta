@@ -7,6 +7,8 @@ import Footer from "components/Footers/Footer.js";
 import romanticBaboy from "./../assets/img/romantic_baboy.jpg";
 import infinitee_pares_logo from "./../assets/img/Infinitee_pares_logo.jpg";
 import mcArthur from "./../assets/img/mcArthur.jpg";
+import buysikleta from "./../assets/img/BuySikleta.png";
+import bikerbg from "./../assets/img/bikerbg.jpg";
 import { useHistory } from "react-router-dom";
 
 // ant design components
@@ -21,16 +23,14 @@ const Index = () => {
     <>
       <IndexNavbar fixed transparent />
 
-      <section className="header relative pt-16 items-center flex h-screen max-h-860-px">
+      <section className="header relative pt-16 items-center flex h-screen max-h-860-px bg-fixed" 
+      style={{ backgroundImage: `url(${bikerbg})` }}>
         <div className="container mx-auto items-center flex flex-wrap">
           <div className="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
             <div className="pt-32 sm:pt-0">
-              <h2 className="font-semibold text-4xl text-blueGray-600">
-                BUYSIKLETA
-              </h2>
-              <p className="mt-4 text-lg leading-relaxed text-blueGray-500">
-                Buysikleta: Pedal Courier Service aims to address the problem by
-                providing an ordering platform exclusively to small businesses{" "}
+            <img alt="..." src={buysikleta}></img>
+              <p className="pl-4 text-xl leading-relaxed text-white">
+                BuySikleta: a Pedal Courier Service{" "}
               </p>
               {/* {Object.keys(userData).length === 0 ? (
                 <div className="mt-12">
@@ -56,10 +56,10 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="mt-48 md:mt-40 pb-40 relative bg-blueGray-100">
+      <section className="mt-48 md:mt-40 pb-40 relative bg-blueGray-700">
         <div
           className="-mt-20 top-0 bottom-auto left-0 right-0 w-full absolute h-20"
-          style={{ transform: "translateZ(0)" }}
+          
         >
           <svg
             className="absolute bottom-0 overflow-hidden"
@@ -70,10 +70,6 @@ const Index = () => {
             x="0"
             y="0"
           >
-            <polygon
-              className="text-blueGray-100 fill-current"
-              points="2560 0 2560 100 0 100"
-            ></polygon>
           </svg>
         </div>
         <div className="container mx-auto">
@@ -153,7 +149,7 @@ const Index = () => {
                     size="large"
                     onClick={() => history.push("/romantic_baboy")}
                   >
-                    Shop Now
+                    Place an order
                   </Button>
                 </div>
               </div>
@@ -226,7 +222,7 @@ const Index = () => {
                     size="large"
                     onClick={() => history.push("/macarthur")}
                   >
-                    Shop Now
+                    Place an order
                   </Button>
                 </div>
               </div>
@@ -317,7 +313,7 @@ const Index = () => {
                     size="large"
                     onClick={() => history.push("/infinitee_pares")}
                   >
-                    Shop Now
+                    Place an order
                   </Button>
                 </div>
               </div>

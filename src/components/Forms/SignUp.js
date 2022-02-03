@@ -33,10 +33,10 @@ const SignUp = ({ onSaveData, handleCancel }) => {
           <InputNumber min={10} style={{ width: "100%" }} />
         </Form.Item>
         <Form.Item
-          label="Address"
-          name="address"
+          label="House No."
+          name="House No."
           labelAlign="left"
-          rules={[{ required: true, message: "Please input your Address!" }]}
+          rules={[{ required: true, message: "Please input your House Number!" }]}
         >
           <Input />
         </Form.Item>

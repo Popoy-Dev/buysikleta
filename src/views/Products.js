@@ -66,8 +66,8 @@ export default function Products() {
         setAddCartList={setAddCartList}
       />
       <main>
-        <section className="pb-20 bg-blueGray-200 mt-10">
-          <div className="flex items-center justify-center ">
+        <section className="pb-20 bg-blueGray-700 mt-10">
+          <div className="flex items-center justify-center">
             <div
               className="lg:pt-12 pt-6 w-full md:w-4/12 px-4 text-center"
               style={{
@@ -174,7 +174,7 @@ export default function Products() {
           </div>
         </section>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

@@ -275,7 +275,7 @@ export default function Navbar({ addCartList, setAddCartList }) {
       >
         <SignUp onSaveData={saveSignUp} handleCancel={handleCancel} />
       </Modal>
-      <nav className="top-0 fixed z-50 w-full flex flex-wrap items-center justify-between px-2 py-3 navbar-expand-lg bg-white shadow">
+      <nav className="top-0 fixed z-50 w-full flex flex-wrap items-center justify-between px-2 py-3 navbar-expand-lg bg-teal-200 shadow">
         <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <Link
@@ -285,7 +285,7 @@ export default function Navbar({ addCartList, setAddCartList }) {
               BUYSIKLETA
             </Link>
             <button
-              className="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
+              className="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-white block lg:hidden outline-none focus:outline-none"
               type="button"
               onClick={() => setNavbarOpen(!navbarOpen)}
             >
@@ -294,7 +294,7 @@ export default function Navbar({ addCartList, setAddCartList }) {
           </div>
           <div
             className={
-              "lg:flex flex-grow items-center bg-white lg:bg-opacity-0 lg:shadow-none" +
+              "lg:flex flex-grow items-center bg-transparent lg:bg-opacity-0 lg:shadow-none" +
               (navbarOpen ? " block" : " hidden")
             }
             id="example-navbar-warning"
@@ -354,7 +354,7 @@ export default function Navbar({ addCartList, setAddCartList }) {
                 <>
                   <li className="flex items-center">
                     <button
-                      className=" text-white  text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
+                      className=" text-black  text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
                       type="button"
                       onClick={showLoginModal}
                       style={{ backgroundColor: "#4ade80" }}
@@ -364,7 +364,7 @@ export default function Navbar({ addCartList, setAddCartList }) {
                   </li>
                   <li className="flex items-center">
                     <button
-                      className="bg-slate-300 text-black active:bg-lightBlue-600 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
+                      className="bg-blue-300 text-white active:bg-lightBlue-600 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
                       type="button"
                       onClick={showModal}
                     >

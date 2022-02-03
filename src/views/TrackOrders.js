@@ -343,7 +343,7 @@ export default function Profile() {
             </svg>
           </div>
         </section>
-        <section className="relative py-4 bg-blueGray-200">
+        <section className="relative py-4 bg-blueGray-700">
           <div className="container mx-auto px-4">
             <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
               <div className="px-6">
@@ -366,6 +366,9 @@ export default function Profile() {
                 </div>
                 {profileInfo && (
                   <div className="text-center mt-12">
+                    <h3 className="text-xl leading-normal text-blueGray-700">
+                      Customer
+                    </h3>
                     <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
                       {`${profileInfo[0]?.firstname}   ${profileInfo[0]?.lastname} `}
                     </h3>
@@ -437,7 +440,7 @@ export default function Profile() {
           </div>
         </section>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }
