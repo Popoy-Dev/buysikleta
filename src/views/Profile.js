@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 import Navbar from "components/Navbars/AuthNavbar.js";
 
-import Footer from "components/Footers/Footer.js";
 import { supabase } from "./../supabaseClient";
 import { Button, Table, Modal, Typography } from "antd";
 
@@ -26,6 +25,8 @@ export default function Profile() {
   );
   const [modalHistory, setModalHistory] = useState(false);
   const [orderHistory, setOrderHistory] = useState([]);
+  const [isEarningModal, setIsEarningModal] = useState(false);
+
   const profileImage = async () => {
     const { data } = await supabase.from("users").select().eq("uid", uid);
     setRiderInfo(data);
@@ -76,7 +77,6 @@ export default function Profile() {
           .select("firstname, lastname, address, barangay, contact_number")
           .match({ uid: list.user_id });
         data[0].order_id = list.order_id;
-        // setCustomerDetails([]);
         setOrderHistory((oldArray) => [...oldArray, ...data]);
       } else {
         const { data } = await supabase
@@ -84,7 +84,6 @@ export default function Profile() {
           .select("firstname, lastname, address, barangay, contact_number")
           .match({ uid: list.user_id });
         data[0].order_id = list.order_id;
-        // setCustomerDetails([]);
         setPendingDisplayListDetails((oldArray) => [...oldArray, ...data]);
       }
     });
@@ -225,7 +224,6 @@ export default function Profile() {
   const handleAvailableOrders = () => {
     setCustomerDetails([]);
     orderLists();
-    // setPendingDisplayListDetails([]);
     setAvailableOrders(true);
   };
 
@@ -248,11 +246,14 @@ export default function Profile() {
       setModalHistory(true);
     } else {
       setModalHistory(true);
-      // setPendingDisplayListDetails([]);
       setAvailableOrders(false);
-      // setCustomerDetails([]);
-      // pendingOrderLists();
     }
+  };
+
+  const showEarningModal = () => {
+    setIsEarningModal(true);
+    handleOrderHistory();
+    setModalHistory(false);
   };
   return (
     <>
@@ -375,9 +376,40 @@ export default function Profile() {
                 </div>
                 {riderInfo && (
                   <div className="text-center mt-12">
-                    <h3 className="text-xl leading-normal text-blueGray-700">
-                      BuySikleta Rider
-                    </h3>
+                    <div>
+                      <h3 className="text-xl leading-normal pr-2 mr-2 text-blueGray-700 inline-block">
+                        BuySikleta Rider
+                      </h3>
+                      <Button
+                        type="primary"
+                        ghost
+                        className=" inline-block"
+                        onClick={showEarningModal}
+                      >
+                        My Earnings
+                      </Button>
+
+                      <Modal
+                        title="My Earnings"
+                        visible={isEarningModal}
+                        onOk={() => setIsEarningModal(false)}
+                        onCancel={() => setIsEarningModal(false)}
+                      >
+                        <Text>
+                          # of Success Delivery : {orderHistory?.length}
+                        </Text>{" "}
+                        <br />
+                        <br />
+                        <Text>Delivery Fee: ₱80.00</Text>
+                        <br />
+                        <br />
+                        <Text mark>
+                          {" "}
+                          Total Earnings :{orderHistory?.length * 80}.00{" "}
+                        </Text>
+                      </Modal>
+                    </div>
+
                     <h3 className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
                       {`${riderInfo[0]?.firstname}   ${riderInfo[0]?.lastname} `}
                     </h3>
