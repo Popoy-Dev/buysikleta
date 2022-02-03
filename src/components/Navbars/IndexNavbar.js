@@ -123,10 +123,7 @@ export default function Navbar({ addCartList, setAddCartList }) {
       password: values.password,
     });
     if (user) {
-      message.success(
-        "This is a prompt message for success, and it will disappear in 10 seconds",
-        10
-      );
+      message.success("Successfully Login!", 10);
 
       const { data } = await supabase.from("users").select().eq("uid", uid);
       setUserData(data);
@@ -139,6 +136,7 @@ export default function Navbar({ addCartList, setAddCartList }) {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     window.location.reload(false);
+    localStorage.removeItem("lists");
   };
 
   const fetchUser = async () => {
@@ -184,7 +182,6 @@ export default function Navbar({ addCartList, setAddCartList }) {
     const filteredAddCartList = addCartList.filter(
       (item) => item.product_id !== record.product_id
     );
-    console.log("filteredAddCartList", filteredAddCartList);
     setAddCartList(filteredAddCartList);
     localStorage.setItem("lists", JSON.stringify(filtered));
     const getUpdatedItems = setCartList(

@@ -9,6 +9,8 @@ import { Select, InputNumber, Form, Input, Button, message } from "antd";
 import { supabase } from "./../supabaseClient";
 
 export default function Products() {
+  const info = supabase.auth.session();
+  console.log("info", info);
   const [addCartList, setAddCartList] = useState([]);
   const [productList, setProductList] = useState([]);
   const queryString = window.location.pathname;
@@ -43,14 +45,21 @@ export default function Products() {
   const onChange = (value) => {};
 
   const onFinish = (values) => {
-    message.success("Item added to cart.", 10);
-    if (addCartList === null) {
-      setAddCartList([values]);
-      localStorage.setItem("lists", JSON.stringify([values]));
+    if (info) {
+      message.success("Item added to cart.", 10);
+      if (addCartList === null) {
+        setAddCartList([values]);
+        localStorage.setItem("lists", JSON.stringify([values]));
+      } else {
+        setAddCartList((oldArray) => [...oldArray, values]);
+        const data = [...addCartList, values];
+        localStorage.setItem("lists", JSON.stringify(data));
+      }
     } else {
-      setAddCartList((oldArray) => [...oldArray, values]);
-      const data = [...addCartList, values];
-      localStorage.setItem("lists", JSON.stringify(data));
+      message.error(
+        "You must first have an account before placing an order",
+        10
+      );
     }
   };
   useEffect(() => {}, [addCartList]);
