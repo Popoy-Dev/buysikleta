@@ -61,8 +61,8 @@ export default function Navbar({ addCartList, setAddCartList }) {
   const deliveredNotification = async () => {
     const { data } = await supabase.from("orders").select().eq("user_id", uid);
 
-    data.map((list) => {
-      if (list.rider_uid) {
+    data?.map((list) => {
+      if (list?.rider_uid) {
         setpendingNumber(1 + pendingNumber);
       }
     });

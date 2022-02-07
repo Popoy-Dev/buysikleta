@@ -197,6 +197,11 @@ export default function Profile() {
       key: "name",
     },
     {
+      title: "Shop",
+      dataIndex: "shop",
+      key: "shop",
+    },
+    {
       title: "Price",
       dataIndex: "price",
       key: "price",

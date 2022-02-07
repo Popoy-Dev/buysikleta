@@ -114,6 +114,7 @@ export default function Products() {
                                 name: list.name,
                                 price: list.price,
                                 product_id: list.product_id,
+                                shop: list.shop,
                               }}
                               onFinish={onFinish}
                               onFinishFailed={onFinishFailed}
@@ -162,6 +163,13 @@ export default function Products() {
                                 hidden={true}
                               >
                                 <Input initialvalues={list.product_id} />
+                              </Form.Item>
+                              <Form.Item
+                                name="shop"
+                                labelCol={{ span: 4 }}
+                                hidden={true}
+                              >
+                                <Input initialvalues={list.shop} />
                               </Form.Item>
 
                               <Form.Item>
