@@ -333,7 +333,7 @@ export default function Profile() {
                     <Text strong>Delivery fee</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell>
-                    <Text type="danger">₱80.00</Text>
+                    <Text type="danger">₱{totalpayment * 0.1 + 20}.00</Text>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
                 <Table.Summary.Row>
@@ -343,7 +343,12 @@ export default function Profile() {
                     <Text strong>Total</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell>
-                    <Text mark>₱{totalpayment + 80}.00</Text>
+                    <Text mark>
+                      ₱{totalpayment + totalpayment * 0.1 + 20}.00
+                    </Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <Text type="">Cash on Delivery</Text>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
               </>
