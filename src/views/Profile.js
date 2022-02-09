@@ -313,7 +313,9 @@ export default function Profile() {
                     <Text strong>Delivery fee</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell>
-                    <Text type="danger">₱{totalpayment * 0.1 + 20}.00</Text>
+                    <Text type="danger">
+                      ₱{Math.round(totalpayment * 0.1) + 20}.00
+                    </Text>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
                 <Table.Summary.Row>
@@ -324,7 +326,7 @@ export default function Profile() {
                   </Table.Summary.Cell>
                   <Table.Summary.Cell>
                     <Text mark>
-                      ₱{totalpayment + totalpayment * 0.1 + 20}.00
+                      ₱{totalpayment + Math.round(totalpayment * 0.1) + 20}.00
                     </Text>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
