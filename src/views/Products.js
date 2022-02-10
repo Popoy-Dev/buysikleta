@@ -5,7 +5,16 @@ import infinitee_pares_logo from "./../assets/img/Infinitee_pares_logo.jpg";
 // components
 import Navbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
-import { Select, InputNumber, Form, Input, Button, message, Modal } from "antd";
+import {
+  Select,
+  InputNumber,
+  Form,
+  Input,
+  Button,
+  message,
+  Modal,
+  Popconfirm,
+} from "antd";
 import { supabase } from "./../supabaseClient";
 
 export default function Products() {
@@ -18,6 +27,10 @@ export default function Products() {
   const [mainImage, setMainImage] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isProductModalVisible, setIsProductModalVisible] = useState(false);
+  const [isProductEditModalVisible, setIsProductEditModalVisible] =
+    useState(false);
+  const [editValue, setEditValue] = useState({});
+
   const [shopName, setShopName] = useState(null);
 
   const bannerImage = () => {
@@ -108,15 +121,60 @@ export default function Products() {
       },
     ]);
     if (data) {
-      console.log("success");
+      message.success("Product details successfully added!", 10);
+      setIsProductModalVisible(false);
+      window.location.reload(false);
     }
     if (error) {
-      console.log(error);
+      message.error("Something wrong please try again!", 10);
+      window.location.reload(false);
     }
     console.log("values", values);
     console.log("productId", productId);
+  };
 
-    console.log("productId", imageName);
+  const editProduct = (list) => {
+    setIsProductEditModalVisible(true);
+    setEditValue(list);
+    console.log("editProduct", list);
+  };
+
+  const onSaveEditProduct = async (values) => {
+    console.log("values", values);
+    const { data, error } = await supabase
+      .from("products")
+      .update({ shop: values.shop, name: values.name, price: values.price })
+      .match({ product_id: values.product_id });
+
+    if (data) {
+      message.success("Product details successfully edited!", 10);
+      setIsProductEditModalVisible(false);
+      window.location.reload(false);
+    }
+    if (error) {
+      message.error("Something wrong please try again!", 10);
+    }
+  };
+
+  const doConfirm = async (id) => {
+    const { data, error } = await supabase
+      .from("products")
+      .delete()
+      .match({ product_id: id });
+
+    if (data) {
+      message.success("Product is successfully deleted!", 10);
+      window.location.reload(false);
+    }
+
+    if (error) {
+      message.error("Something wrong please try again!", 10);
+    }
+  };
+
+  const cancel = (e) => {
+    console.log(e);
+    message.error("Click on No");
   };
 
   return (
@@ -154,7 +212,7 @@ export default function Products() {
                 </Button>
 
                 <Modal
-                  title="Basic Modal"
+                  title="Add Product"
                   visible={isProductModalVisible}
                   footer={null}
                   onCancel={() => setIsProductModalVisible(false)}
@@ -197,6 +255,61 @@ export default function Products() {
                     </div>
                   </Form>
                 </Modal>
+
+                <Modal
+                  title="Edit Product"
+                  visible={isProductEditModalVisible}
+                  footer={null}
+                  onCancel={() => setIsProductEditModalVisible(false)}
+                >
+                  <Form
+                    onFinish={onSaveEditProduct}
+                    initialValues={{
+                      shop: editValue.shop,
+                      name: editValue.name,
+                      price: editValue.price,
+                      product_id: editValue.product_id,
+                    }}
+                    labelCol={{ span: 8 }}
+                  >
+                    <Form.Item label="shop" name="shop" hidden={true}>
+                      <Select initialvalues={shopName}></Select>
+                    </Form.Item>
+                    <Form.Item
+                      label="Name of product"
+                      name="name"
+                      labelCol={{ span: 6 }}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label="Product Price"
+                      name="price"
+                      labelCol={{ span: 6 }}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      hidden={true}
+                      name="product_id"
+                      labelCol={{ span: 6 }}
+                    >
+                      <Input />
+                    </Form.Item>
+
+                    <div className="text-right">
+                      <Button type="primary" htmlType="submit" className="mr-4">
+                        Submit
+                      </Button>
+                      <Button
+                        type="default"
+                        onClick={() => setIsProductModalVisible(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </Form>
+                </Modal>
               </>
             )}
           </div>
@@ -212,6 +325,35 @@ export default function Products() {
                       >
                         <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-8 shadow-lg rounded-lg">
                           <div className="px-4 py-5 flex-auto">
+                            {isOwner === true && (
+                              <div className="text-right">
+                                <Button
+                                  shape="round"
+                                  style={{ backgroundColor: "#cccc00" }}
+                                  onClick={() => editProduct(list)}
+                                >
+                                  Edit
+                                </Button>
+
+                                <Popconfirm
+                                  title="Are you sure to delete this task?"
+                                  onConfirm={() => {
+                                    doConfirm(list.product_id);
+                                  }}
+                                  onCancel={cancel}
+                                  okText="Yes"
+                                  cancelText="No"
+                                >
+                                  <Button
+                                    shape="round"
+                                    style={{ backgroundColor: "#ff6257" }}
+                                  >
+                                    Delete
+                                  </Button>
+                                </Popconfirm>
+                              </div>
+                            )}
+
                             <div className="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 mb-5 shadow-lg rounded-full bg-red-400">
                               <i className="fas fa-award"></i>
                             </div>
