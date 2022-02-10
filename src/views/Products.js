@@ -5,16 +5,20 @@ import infinitee_pares_logo from "./../assets/img/Infinitee_pares_logo.jpg";
 // components
 import Navbar from "components/Navbars/IndexNavbar.js";
 import Footer from "components/Footers/Footer.js";
-import { Select, InputNumber, Form, Input, Button, message } from "antd";
+import { Select, InputNumber, Form, Input, Button, message, Modal } from "antd";
 import { supabase } from "./../supabaseClient";
 
 export default function Products() {
   const info = supabase.auth.session();
-  console.log("info", info);
+  const uid = info?.user?.user_metadata?.uid;
+
   const [addCartList, setAddCartList] = useState([]);
   const [productList, setProductList] = useState([]);
   const queryString = window.location.pathname;
   const [mainImage, setMainImage] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isProductModalVisible, setIsProductModalVisible] = useState(false);
+  const [shopName, setShopName] = useState(null);
 
   const bannerImage = () => {
     if (queryString === "/romantic_baboy") setMainImage(romanticBaboy);
@@ -22,11 +26,26 @@ export default function Products() {
     if (queryString === "/infinitee_pares") setMainImage(infinitee_pares_logo);
   };
 
+  const owner = async () => {
+    const { data } = await supabase
+      .from("users")
+      .select("is_shopOwner, shop_name")
+      .eq("uid", uid);
+
+    if (
+      data[0].is_shopOwner === true &&
+      data[0].shop_name === queryString.substring(1)
+    ) {
+      setShopName(data[0].shop_name);
+      setIsOwner(true);
+    }
+  };
+
   useEffect(() => {
     bannerImage();
     getProductList();
+    owner();
   }, []);
-
   const getProductList = async () => {
     var shopName = queryString.substring(1);
     const { data } = await supabase
@@ -66,6 +85,39 @@ export default function Products() {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+  const addProductShowModal = () => {
+    setIsProductModalVisible(true);
+  };
+  const onSaveAddProduct = async (values) => {
+    const productId = Math.floor(100000 + Math.random() * 90000);
+    let imageName = values.name.toLowerCase().replace(" ", "_");
+
+    var i = 0,
+      strLength = imageName.length;
+    for (i; i < strLength; i++) {
+      imageName = imageName.replace(" ", "_");
+    }
+
+    const { data, error } = await supabase.from("products").insert([
+      {
+        shop: values.shop,
+        name: values.name,
+        image_name: imageName,
+        product_id: productId,
+        price: values.price,
+      },
+    ]);
+    if (data) {
+      console.log("success");
+    }
+    if (error) {
+      console.log(error);
+    }
+    console.log("values", values);
+    console.log("productId", productId);
+
+    console.log("productId", imageName);
+  };
 
   return (
     <>
@@ -89,6 +141,64 @@ export default function Products() {
                 className="w-full align-middle rounded-t-lg"
               />
             </div>
+          </div>
+          <div className="text-center mt-8">
+            {isOwner === true && (
+              <>
+                <Button
+                  type="primary"
+                  shape="round"
+                  onClick={addProductShowModal}
+                >
+                  Add Product
+                </Button>
+
+                <Modal
+                  title="Basic Modal"
+                  visible={isProductModalVisible}
+                  footer={null}
+                  onCancel={() => setIsProductModalVisible(false)}
+                >
+                  <Form
+                    onFinish={onSaveAddProduct}
+                    initialValues={{
+                      shop: shopName,
+                    }}
+                    labelCol={{ span: 8 }}
+                  >
+                    <Form.Item label="shop" name="shop" hidden={true}>
+                      <Select initialvalues={shopName}></Select>
+                    </Form.Item>
+                    <Form.Item
+                      label="Name of product"
+                      name="name"
+                      labelCol={{ span: 6 }}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      label="Product Price"
+                      name="price"
+                      labelCol={{ span: 6 }}
+                    >
+                      <Input />
+                    </Form.Item>
+
+                    <div className="text-right">
+                      <Button type="primary" htmlType="submit" className="mr-4">
+                        Submit
+                      </Button>
+                      <Button
+                        type="default"
+                        onClick={() => setIsProductModalVisible(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </Form>
+                </Modal>
+              </>
+            )}
           </div>
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap">
