@@ -87,4 +87,5 @@ function defaultTask() {
 
 }
 
-exports.default = defaultTask
+// eslint-disable-next-line no-lone-blocks
+{ exports.default = defaultTask }
